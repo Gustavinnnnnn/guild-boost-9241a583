@@ -161,21 +161,20 @@ export const findGroupOfNiche = (value: string): CategoryGroup | undefined =>
   CATEGORY_GROUPS.find((g) => g.niches.some((n) => n.value === value));
 
 // ============================================================
-// SISTEMA DE MOEDA — agora em DINHEIRO REAL (R$)
-// `profiles.credits` representa CENTAVOS de Real.
-// 1 DM = 2 centavos = R$ 0,02 (mesma lógica do Meta Ads / TikTok Ads)
+// SISTEMA DE MOEDA — Coins (estilo Robux/V-Bucks)
+// `profiles.credits` representa COINS. 1 coin = 10 DMs entregues.
 // ============================================================
-export const CENTS_PER_DM = 2;            // custo por entrega
-export const DMS_PER_REAL = 50;           // R$ 1,00 = 50 DMs
+export const DMS_PER_COIN = 10;
 
-export const dmsToCents = (dms: number) => Math.ceil(dms * CENTS_PER_DM);
-export const centsToDms = (cents: number) => Math.floor(cents / CENTS_PER_DM);
-export const centsToReais = (cents: number) => cents / 100;
+export const coinsToDms = (coins: number) => coins * DMS_PER_COIN;
+export const dmsToCoins = (dms: number) => Math.ceil(dms / DMS_PER_COIN);
 
-/** Formata centavos como "R$ 12,34" */
-export const formatBRL = (cents: number) =>
-  (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+/** Formata coins com separador de milhar */
+export const formatCoins = (coins: number) =>
+  coins.toLocaleString("pt-BR");
 
-// Compatibilidade com código antigo (algumas telas ainda chamam coinsToDms / dmsToCoins)
-export const coinsToDms = (cents: number) => centsToDms(cents);
-export const dmsToCoins = (dms: number) => dmsToCents(dms);
+// Compatibilidade com chamadas antigas que ainda usam nomes em "cents"
+export const dmsToCents = dmsToCoins;
+export const centsToDms = coinsToDms;
+export const CENTS_PER_DM = 1; // não usado, só pra evitar quebrar imports
+export const formatBRL = formatCoins; // alias temporário pra não quebrar imports antigos

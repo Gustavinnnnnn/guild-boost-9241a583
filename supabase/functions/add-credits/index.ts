@@ -21,23 +21,21 @@ Deno.serve(async (req) => {
     if (!userData?.user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     const userId = userData.user.id;
 
-    // `amount` agora é em CENTAVOS de R$ (ex: 5000 = R$ 50,00)
     const { amount } = await req.json();
-    const cents = Math.floor(Number(amount));
-    if (!cents || cents <= 0 || cents > 10_000_000) {
+    const coins = Math.floor(Number(amount));
+    if (!coins || coins <= 0 || coins > 1_000_000) {
       return new Response(JSON.stringify({ error: "invalid_amount" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { data: profile } = await admin.from("profiles").select("credits").eq("id", userId).single();
     const current = profile?.credits ?? 0;
-    const newBalance = current + cents;
+    const newBalance = current + coins;
 
-    const reais = (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     await admin.from("profiles").update({ credits: newBalance }).eq("id", userId);
     await admin.from("credit_transactions").insert({
-      user_id: userId, amount: cents, type: "purchase",
-      description: `Depósito de ${reais} (modo de teste)`,
+      user_id: userId, amount: coins, type: "purchase",
+      description: `Depósito de ${coins.toLocaleString("pt-BR")} coins (modo de teste)`,
       balance_after: newBalance,
     });
 
