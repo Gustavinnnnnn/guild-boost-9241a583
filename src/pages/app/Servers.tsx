@@ -20,6 +20,7 @@ const Servers = () => {
   const [guilds, setGuilds] = useState<Guild[]>([]);
   const [connected, setConnected] = useState<ConnectedServer[]>([]);
   const [loadingGuilds, setLoadingGuilds] = useState(false);
+  const [checkingId, setCheckingId] = useState<string | null>(null);
   const [discordClientId, setDiscordClientId] = useState<string>("");
 
   useEffect(() => {
@@ -100,6 +101,22 @@ const Servers = () => {
     loadConnected();
   };
 
+  const recheckBot = async (guildId: string) => {
+    setCheckingId(guildId);
+    const { data, error } = await supabase.functions.invoke("discord-check-bot", {
+      body: { guild_id: guildId },
+    });
+    setCheckingId(null);
+    if (error || data?.error) {
+      toast.error("Não consegui verificar. Tente de novo em alguns segundos.");
+      return;
+    }
+    if (data.bot_in_server) toast.success("Bot detectado! ✅");
+    else toast.error("Bot ainda não está no servidor. Instale e tente de novo.");
+    loadConnected();
+    loadGuilds();
+  };
+
   const isAlreadyConnected = (guildId: string) => connected.some((c) => c.guild_id === guildId);
 
   if (!isDiscordConnected) {
@@ -151,6 +168,15 @@ const Servers = () => {
                       <Button size="sm" variant="discord" className="w-full gap-1.5"><Megaphone className="h-3.5 w-3.5" /> Campanha</Button>
                     </Link>
                   )}
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    title="Verificar bot"
+                    onClick={() => recheckBot(s.guild_id)}
+                    disabled={checkingId === s.guild_id}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${checkingId === s.guild_id ? "animate-spin" : ""}`} />
+                  </Button>
                   <Button size="icon" variant="ghost" onClick={() => disconnectServer(s.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                 </div>
               </div>
