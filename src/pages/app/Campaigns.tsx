@@ -40,7 +40,12 @@ const Campaigns = () => {
     setSending(id);
     const { data, error } = await supabase.functions.invoke("send-campaign", { body: { campaign_id: id } });
     setSending(null);
-    if (error || data?.error) { toast.error("Falha: " + (data?.error || error?.message)); load(); return; }
+    // Erros 4xx vêm em error.context (Response). Tentamos extrair a mensagem real.
+    let errMsg = data?.error || error?.message;
+    if (error && (error as any).context && typeof (error as any).context.json === "function") {
+      try { const j = await (error as any).context.json(); errMsg = j?.error || errMsg; } catch {}
+    }
+    if (errMsg) { toast.error(errMsg, { duration: 8000 }); load(); return; }
     toast.success(`Disparada! ${data.delivered} entregues.`);
     refreshProfile();
     load();
