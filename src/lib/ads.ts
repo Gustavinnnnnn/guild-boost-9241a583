@@ -37,32 +37,89 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     ],
   },
   {
-    id: "servers",
-    label: "Comunidades & Servidores",
-    emoji: "💬",
-    color: "from-blue-500/20 to-cyan-500/20 border-blue-500/40",
-    description: "Servidores Discord ativos",
+    id: "fps",
+    label: "Jogos FPS / Tiro",
+    emoji: "🔫",
+    color: "from-red-500/20 to-rose-500/20 border-red-500/40",
+    description: "Públicos competitivos de tiro",
     niches: [
-      { value: "server_general", label: "Comunidade Geral", emoji: "🌐", description: "Conversa, amigos" },
-      { value: "server_gaming", label: "Servidor de Jogos", emoji: "🕹️", description: "Squads, gameplay" },
-      { value: "server_friends", label: "Amigos & Interação", emoji: "🤝", description: "Social, chill" },
-      { value: "server_voice", label: "Voice & Comunicação", emoji: "🎙️", description: "Voz, podcasts" },
-      { value: "server_web3", label: "Web3 / Hype", emoji: "🚀", description: "NFTs, hype, drops" },
-      { value: "server_meme", label: "Memes & Humor", emoji: "😂", description: "Memes, diversão" },
+      { value: "game_valorant", label: "Valorant", emoji: "🎯", description: "Players, ranked, smurf" },
+      { value: "game_cs2", label: "CS2 / CS:GO", emoji: "🟧", description: "Skins, FACEIT, ranked" },
+      { value: "game_cod", label: "Call of Duty", emoji: "🪖", description: "Warzone, MW, BO" },
+      { value: "game_r6", label: "Rainbow Six", emoji: "🛡️", description: "Siege players" },
+      { value: "game_apex", label: "Apex Legends", emoji: "🟥", description: "Predator, ranked" },
+      { value: "game_overwatch", label: "Overwatch", emoji: "🟨", description: "OW2 players" },
     ],
   },
   {
-    id: "gaming",
-    label: "Gaming",
-    emoji: "🎮",
-    color: "from-purple-500/20 to-pink-500/20 border-purple-500/40",
-    description: "Jogadores ativos",
+    id: "battle_royale",
+    label: "Battle Royale",
+    emoji: "🪂",
+    color: "from-amber-500/20 to-orange-500/20 border-amber-500/40",
+    description: "Jogos de sobrevivência BR",
     niches: [
-      { value: "gaming_fps", label: "FPS / Tiro", emoji: "🔫", description: "Valorant, CS, COD" },
-      { value: "gaming_moba", label: "MOBA", emoji: "⚔️", description: "LoL, Dota" },
-      { value: "gaming_mmo", label: "MMO / RPG", emoji: "🐉", description: "WoW, FFXIV" },
-      { value: "gaming_mobile", label: "Mobile Gaming", emoji: "📱", description: "Free Fire, ML" },
-      { value: "gaming_minecraft", label: "Minecraft", emoji: "🟩", description: "MC servers" },
+      { value: "game_freefire", label: "Free Fire", emoji: "🔥", description: "BR, diamantes, contas" },
+      { value: "game_fortnite", label: "Fortnite", emoji: "🟪", description: "V-Bucks, skins, players" },
+      { value: "game_pubg", label: "PUBG", emoji: "🪖", description: "Mobile e PC" },
+      { value: "game_warzone", label: "Warzone", emoji: "🟫", description: "BR competitivo" },
+    ],
+  },
+  {
+    id: "sandbox_rp",
+    label: "Sandbox / RP",
+    emoji: "🧱",
+    color: "from-emerald-500/20 to-green-500/20 border-emerald-500/40",
+    description: "Mundos abertos, roleplay e construção",
+    niches: [
+      { value: "game_minecraft", label: "Minecraft", emoji: "🟩", description: "Servers, SMP, bedwars" },
+      { value: "game_fivem", label: "FiveM / GTA RP", emoji: "🚓", description: "Cidades RP, GTA V" },
+      { value: "game_roblox", label: "Roblox", emoji: "🟥", description: "Players, devs, traders" },
+      { value: "game_terraria", label: "Terraria", emoji: "🟢", description: "Sandbox 2D" },
+      { value: "game_rust", label: "Rust", emoji: "🟧", description: "Survival PvP" },
+    ],
+  },
+  {
+    id: "moba_mmo",
+    label: "MOBA & MMO/RPG",
+    emoji: "🐉",
+    color: "from-purple-500/20 to-fuchsia-500/20 border-purple-500/40",
+    description: "Estratégia em equipe e RPG online",
+    niches: [
+      { value: "game_lol", label: "League of Legends", emoji: "🛡️", description: "Ranked, ARAM, TFT" },
+      { value: "game_dota", label: "Dota 2", emoji: "⚔️", description: "Players, ranked" },
+      { value: "game_wow", label: "World of Warcraft", emoji: "🐺", description: "Raids, M+, PvP" },
+      { value: "game_ffxiv", label: "Final Fantasy XIV", emoji: "🌟", description: "Endgame, RP" },
+      { value: "game_lostark", label: "Lost Ark", emoji: "🗡️", description: "MMO ARPG" },
+    ],
+  },
+  {
+    id: "mobile",
+    label: "Mobile Gaming",
+    emoji: "📱",
+    color: "from-cyan-500/20 to-blue-500/20 border-cyan-500/40",
+    description: "Jogos populares no celular",
+    niches: [
+      { value: "game_ml", label: "Mobile Legends", emoji: "🌙", description: "MLBB players" },
+      { value: "game_cod_mobile", label: "COD Mobile", emoji: "📲", description: "BR e MP mobile" },
+      { value: "game_clash", label: "Clash Royale / CoC", emoji: "⚔️", description: "Supercell" },
+      { value: "game_genshin", label: "Genshin Impact", emoji: "✨", description: "HoYoverse fans" },
+      { value: "game_brawl", label: "Brawl Stars", emoji: "⭐", description: "Players competitivos" },
+    ],
+  },
+  {
+    id: "servers",
+    label: "Comunidades & Servidores",
+    emoji: "💬",
+    color: "from-indigo-500/20 to-blue-500/20 border-indigo-500/40",
+    description: "Servidores Discord ativos",
+    niches: [
+      { value: "server_general", label: "Comunidade Geral", emoji: "🌐", description: "Conversa, amigos" },
+      { value: "server_friends", label: "Interação & Amizade", emoji: "🤝", description: "Conhecer pessoas" },
+      { value: "server_voice", label: "Voice & Podcasts", emoji: "🎙️", description: "Voz ativa, calls" },
+      { value: "server_hype", label: "Web Hype / Drops", emoji: "🚀", description: "NFT, drops, trends" },
+      { value: "server_meme", label: "Memes & Humor", emoji: "😂", description: "Memes, comédia" },
+      { value: "server_namoro", label: "Namoro & Dating", emoji: "💕", description: "Solteiros" },
+      { value: "server_18", label: "+18 / Adulto", emoji: "🔞", description: "NSFW, adultos" },
     ],
   },
   {
@@ -75,6 +132,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
       { value: "money_crypto", label: "Crypto", emoji: "₿", description: "Bitcoin, altcoins" },
       { value: "money_trading", label: "Trading", emoji: "📊", description: "Day trade, forex" },
       { value: "money_business", label: "Negócios", emoji: "💼", description: "Empreendedorismo" },
+      { value: "money_renda", label: "Renda extra", emoji: "💵", description: "Side hustle, freela" },
     ],
   },
   {
@@ -88,6 +146,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
       { value: "life_music", label: "Música", emoji: "🎵", description: "Produtores, fãs" },
       { value: "life_tech", label: "Tecnologia", emoji: "💻", description: "Dev, IA, gadgets" },
       { value: "life_education", label: "Educação", emoji: "📚", description: "Estudo, vestibular" },
+      { value: "life_fitness", label: "Fitness & Saúde", emoji: "💪", description: "Treino, dieta" },
     ],
   },
 ];
@@ -101,7 +160,22 @@ export const findNiche = (value: string): Niche | undefined =>
 export const findGroupOfNiche = (value: string): CategoryGroup | undefined =>
   CATEGORY_GROUPS.find((g) => g.niches.some((n) => n.value === value));
 
-// Conversão: 1 coin = 10 DMs
-export const DMS_PER_COIN = 10;
-export const coinsToDms = (coins: number) => coins * DMS_PER_COIN;
-export const dmsToCoins = (dms: number) => Math.ceil(dms / DMS_PER_COIN);
+// ============================================================
+// SISTEMA DE MOEDA — agora em DINHEIRO REAL (R$)
+// `profiles.credits` representa CENTAVOS de Real.
+// 1 DM = 2 centavos = R$ 0,02 (mesma lógica do Meta Ads / TikTok Ads)
+// ============================================================
+export const CENTS_PER_DM = 2;            // custo por entrega
+export const DMS_PER_REAL = 50;           // R$ 1,00 = 50 DMs
+
+export const dmsToCents = (dms: number) => Math.ceil(dms * CENTS_PER_DM);
+export const centsToDms = (cents: number) => Math.floor(cents / CENTS_PER_DM);
+export const centsToReais = (cents: number) => cents / 100;
+
+/** Formata centavos como "R$ 12,34" */
+export const formatBRL = (cents: number) =>
+  (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+// Compatibilidade com código antigo (algumas telas ainda chamam coinsToDms / dmsToCoins)
+export const coinsToDms = (cents: number) => centsToDms(cents);
+export const dmsToCoins = (dms: number) => dmsToCents(dms);
