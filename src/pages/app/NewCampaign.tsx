@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import {
-  ImageIcon, Loader2, Send, Save, X, Users, Wallet, ExternalLink, Target,
+  ImageIcon, Loader2, Send, Save, X, Users, Coins, ExternalLink, Target,
   Sparkles, ChevronDown, ChevronUp, Check, FlaskConical, Wand2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { CATEGORY_GROUPS, dmsToCents, centsToDms, findNiche, findGroupOfNiche, formatBRL, CENTS_PER_DM } from "@/lib/ads";
+import { CATEGORY_GROUPS, dmsToCoins, coinsToDms, findNiche, findGroupOfNiche, formatCoins } from "@/lib/ads";
 
 const COLORS = ["#5865F2", "#57F287", "#FEE75C", "#EB459E", "#ED4245", "#9B59B6", "#F47B67", "#00D9FF"];
 
@@ -79,10 +79,10 @@ const NewCampaign = () => {
     });
   }, [selectedNiches]);
 
-  const costCents = useMemo(() => dmsToCents(targetCount), [targetCount]);
-  const balanceCents = profile?.credits ?? 0;
-  const maxByBalance = centsToDms(balanceCents);
-  const sliderMax = Math.max(10, Math.min(maxReach || 10000, maxByBalance || 10000, 100000));
+  const cost = useMemo(() => dmsToCoins(targetCount), [targetCount]);
+  const myCoins = profile?.credits ?? 0;
+  const maxByCoins = coinsToDms(myCoins);
+  const sliderMax = Math.max(10, Math.min(maxReach || 10000, maxByCoins || 10000, 100000));
 
   const toggleNiche = (val: string) => {
     setSelectedNiches((s) => (s.includes(val) ? s.filter((x) => x !== val) : [...s, val]));
@@ -132,7 +132,7 @@ const NewCampaign = () => {
     if (!message.trim()) return toast.error("Escreva a mensagem");
     if (buttonUrl && !validateUrl(buttonUrl)) return toast.error("URL do botão inválida");
     if (action === "send" && selectedNiches.length === 0) return toast.error("Selecione ao menos 1 nicho de público");
-    if (action === "send" && balanceCents < costCents) return toast.error(`Você precisa de ${formatBRL(costCents)}, tem apenas ${formatBRL(balanceCents)}`);
+    if (action === "send" && myCoins < cost) return toast.error(`Você precisa de ${cost} coins, tem apenas ${myCoins}`);
 
     setBusy(true);
     const payload = {
@@ -260,10 +260,10 @@ const NewCampaign = () => {
         {/* ORÇAMENTO */}
         <div className="rounded-2xl bg-gradient-to-br from-card to-card/50 border border-border p-5 space-y-4 shadow-card">
           <div className="flex items-center gap-2 font-bold">
-            <div className="h-8 w-8 rounded-lg bg-primary/15 grid place-items-center"><Wallet className="h-4 w-4 text-primary" /></div>
+            <div className="h-8 w-8 rounded-lg bg-primary/15 grid place-items-center"><Coins className="h-4 w-4 text-primary" /></div>
             <div>
               <div className="text-sm">Orçamento & alcance</div>
-              <div className="text-[11px] text-muted-foreground font-normal">R$ 0,02 por pessoa alcançada</div>
+              <div className="text-[11px] text-muted-foreground font-normal">1 coin = 10 pessoas alcançadas</div>
             </div>
           </div>
 
@@ -288,15 +288,15 @@ const NewCampaign = () => {
           <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border">
             <div className="p-2 rounded-lg bg-primary/10">
               <div className="text-[9px] text-muted-foreground uppercase">Custo</div>
-              <div className="font-black text-base flex items-center gap-1"><Wallet className="h-3.5 w-3.5 text-primary" />{formatBRL(costCents)}</div>
+              <div className="font-black text-lg flex items-center gap-1"><Coins className="h-4 w-4 text-primary" />{cost}</div>
             </div>
             <div className="p-2 rounded-lg bg-secondary/40">
               <div className="text-[9px] text-muted-foreground uppercase">Saldo</div>
-              <div className={`font-black text-base ${balanceCents >= costCents ? "" : "text-destructive"}`}>{formatBRL(balanceCents)}</div>
+              <div className={`font-black text-lg ${myCoins >= cost ? "" : "text-destructive"}`}>{formatCoins(myCoins)}</div>
             </div>
             <div className="p-2 rounded-lg bg-success/10">
               <div className="text-[9px] text-muted-foreground uppercase">Após</div>
-              <div className="font-black text-base text-success">{formatBRL(Math.max(0, balanceCents - costCents))}</div>
+              <div className="font-black text-lg text-success">{formatCoins(Math.max(0, myCoins - cost))}</div>
             </div>
           </div>
         </div>
@@ -393,7 +393,7 @@ const NewCampaign = () => {
           <div className="grid grid-cols-3 gap-2 text-center">
             <div><div className="text-[9px] text-muted-foreground uppercase">Nichos</div><div className="font-black text-base">{selectedNiches.length}</div></div>
             <div><div className="text-[9px] text-muted-foreground uppercase">Alcance</div><div className="font-black text-base flex items-center justify-center gap-0.5"><Users className="h-3 w-3" />{targetCount.toLocaleString("pt-BR")}</div></div>
-            <div><div className="text-[9px] text-muted-foreground uppercase">Custo</div><div className="font-black text-base flex items-center justify-center gap-0.5"><Wallet className="h-3 w-3 text-primary" />{formatBRL(costCents)}</div></div>
+            <div><div className="text-[9px] text-muted-foreground uppercase">Custo</div><div className="font-black text-base flex items-center justify-center gap-0.5"><Coins className="h-3 w-3 text-primary" />{cost}</div></div>
           </div>
           {selectedNiches.length > 0 && (
             <div className="mt-2 pt-2 border-t border-primary/20 flex flex-wrap gap-1">
