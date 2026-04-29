@@ -16,52 +16,49 @@ export type Database = {
     Tables: {
       campaigns: {
         Row: {
-          audience: string
-          budget: number
-          clicks: number
+          channel_id: string | null
+          channel_name: string | null
           created_at: string
-          delivery_type: string
+          embed_color: string | null
+          error_message: string | null
           id: string
-          impressions: number
-          members_gained: number
+          image_url: string | null
+          message: string
           name: string
-          niche: string
+          sent_at: string | null
           server_id: string | null
-          spent: number
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
-          audience?: string
-          budget?: number
-          clicks?: number
+          channel_id?: string | null
+          channel_name?: string | null
           created_at?: string
-          delivery_type?: string
+          embed_color?: string | null
+          error_message?: string | null
           id?: string
-          impressions?: number
-          members_gained?: number
+          image_url?: string | null
+          message: string
           name: string
-          niche?: string
+          sent_at?: string | null
           server_id?: string | null
-          spent?: number
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
-          audience?: string
-          budget?: number
-          clicks?: number
+          channel_id?: string | null
+          channel_name?: string | null
           created_at?: string
-          delivery_type?: string
+          embed_color?: string | null
+          error_message?: string | null
           id?: string
-          impressions?: number
-          members_gained?: number
+          image_url?: string | null
+          message?: string
           name?: string
-          niche?: string
+          sent_at?: string | null
           server_id?: string | null
-          spent?: number
           status?: string
           updated_at?: string
           user_id?: string
@@ -71,95 +68,89 @@ export type Database = {
             foreignKeyName: "campaigns_server_id_fkey"
             columns: ["server_id"]
             isOneToOne: false
-            referencedRelation: "servers"
+            referencedRelation: "discord_servers"
             referencedColumns: ["id"]
           },
         ]
       }
+      discord_servers: {
+        Row: {
+          bot_in_server: boolean | null
+          created_at: string
+          default_channel_id: string | null
+          default_channel_name: string | null
+          guild_id: string
+          icon_url: string | null
+          id: string
+          member_count: number | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bot_in_server?: boolean | null
+          created_at?: string
+          default_channel_id?: string | null
+          default_channel_name?: string | null
+          guild_id: string
+          icon_url?: string | null
+          id?: string
+          member_count?: number | null
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bot_in_server?: boolean | null
+          created_at?: string
+          default_channel_id?: string | null
+          default_channel_name?: string | null
+          guild_id?: string
+          icon_url?: string | null
+          id?: string
+          member_count?: number | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
-          balance: number
           created_at: string
+          discord_access_token: string | null
+          discord_id: string | null
+          discord_refresh_token: string | null
+          discord_token_expires_at: string | null
+          discord_username: string | null
           id: string
           updated_at: string
           username: string
         }
         Insert: {
           avatar_url?: string | null
-          balance?: number
           created_at?: string
+          discord_access_token?: string | null
+          discord_id?: string | null
+          discord_refresh_token?: string | null
+          discord_token_expires_at?: string | null
+          discord_username?: string | null
           id: string
           updated_at?: string
           username: string
         }
         Update: {
           avatar_url?: string | null
-          balance?: number
           created_at?: string
+          discord_access_token?: string | null
+          discord_id?: string | null
+          discord_refresh_token?: string | null
+          discord_token_expires_at?: string | null
+          discord_username?: string | null
           id?: string
           updated_at?: string
           username?: string
-        }
-        Relationships: []
-      }
-      servers: {
-        Row: {
-          bot_active: boolean
-          created_at: string
-          icon: string
-          id: string
-          members: number
-          name: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          bot_active?: boolean
-          created_at?: string
-          icon?: string
-          id?: string
-          members?: number
-          name: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          bot_active?: boolean
-          created_at?: string
-          icon?: string
-          id?: string
-          members?: number
-          name?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      wallet_transactions: {
-        Row: {
-          amount: number
-          created_at: string
-          description: string
-          id: string
-          type: string
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          description: string
-          id?: string
-          type: string
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          description?: string
-          id?: string
-          type?: string
-          user_id?: string
         }
         Relationships: []
       }

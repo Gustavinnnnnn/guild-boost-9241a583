@@ -1,126 +1,101 @@
-import { NavLink, Outlet, useLocation, Link, useNavigate } from "react-router-dom";
-import {
-  LayoutDashboard, Server, Rocket, Megaphone, BarChart3, Wallet, Settings, Bell, Search, LogOut,
-} from "lucide-react";
-import { useProfile } from "@/hooks/useProfile";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Server, Megaphone, LogOut, Plus } from "lucide-react";
+import { DiscordIcon } from "@/components/DiscordIcon";
 import { supabase } from "@/integrations/supabase/client";
+import { useProfile } from "@/hooks/useProfile";
 import { Button } from "@/components/ui/button";
 
-const navItems = [
-  { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
+const nav = [
   { to: "/app/servidores", label: "Meus Servidores", icon: Server },
-  { to: "/app/criar-campanha", label: "Criar Campanha", icon: Rocket },
-  { to: "/app/campanhas", label: "Campanhas Ativas", icon: Megaphone },
-  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/app/carteira", label: "Carteira", icon: Wallet },
-  { to: "/app/configuracoes", label: "Configurações", icon: Settings },
+  { to: "/app/campanhas", label: "Campanhas", icon: Megaphone },
 ];
 
 const AppLayout = () => {
-  const { pathname } = useLocation();
   const navigate = useNavigate();
   const { profile } = useProfile();
-  const current = navItems.find((n) => (n.end ? pathname === n.to : pathname.startsWith(n.to)));
 
   const logout = async () => {
     await supabase.auth.signOut();
-    navigate("/");
+    navigate("/auth");
   };
 
-  const username = profile?.username ?? "...";
-  const avatar = profile?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`;
-  const balance = profile?.balance ?? 0;
-
   return (
-    <div className="min-h-screen flex w-full bg-background">
-      <aside className="hidden md:flex w-64 flex-col bg-sidebar border-r border-sidebar-border">
-        <Link to="/" className="flex items-center gap-2 px-5 h-16 border-b border-sidebar-border">
-          <div className="h-9 w-9 rounded-xl bg-gradient-primary grid place-items-center shadow-glow">
-            <Rocket className="h-5 w-5 text-white" />
-          </div>
-          <span className="font-bold text-sidebar-foreground">ServerBoost</span>
-        </Link>
+    <div className="min-h-screen bg-background flex flex-col md:flex-row">
+      {/* Sidebar */}
+      <aside className="hidden md:flex w-64 border-r border-border bg-card flex-col">
+        <div className="p-5 border-b border-border">
+          <Link to="/app/servidores" className="flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-primary-glow grid place-items-center shadow-glow">
+              <DiscordIcon className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-bold text-lg">ServerBoost</span>
+          </Link>
+        </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          <div className="px-3 py-2 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Menu</div>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-smooth ${
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-glow"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                }`
-              }
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
+        <nav className="flex-1 p-3 space-y-1">
+          {nav.map((n) => (
+            <NavLink key={n.to} to={n.to} end className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              }`
+            }>
+              <n.icon className="h-4 w-4" />
+              {n.label}
             </NavLink>
           ))}
+          <Link to="/app/campanhas/nova" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold border border-dashed border-border text-foreground hover:border-primary hover:bg-primary/5 transition mt-3">
+            <Plus className="h-4 w-4" /> Nova campanha
+          </Link>
         </nav>
 
-        <div className="p-3 border-t border-sidebar-border space-y-2">
-          <div className="flex items-center gap-3 p-2 rounded-lg bg-sidebar-accent">
-            <img src={avatar} alt={username} className="h-9 w-9 rounded-full bg-card" />
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold truncate">{username}</div>
-              <div className="text-xs text-success">R$ {balance.toFixed(2)}</div>
+        <div className="p-3 border-t border-border">
+          <div className="flex items-center gap-2.5 px-2 py-2">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} className="h-9 w-9 rounded-full" alt="" />
+            ) : (
+              <div className="h-9 w-9 rounded-full bg-secondary grid place-items-center text-sm font-bold">
+                {profile?.username?.[0]?.toUpperCase() ?? "?"}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold truncate">{profile?.discord_username || profile?.username || "Usuário"}</div>
+              {profile?.discord_id && <div className="text-[10px] text-success">● Discord conectado</div>}
             </div>
-            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={logout} title="Sair">
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <Button size="icon" variant="ghost" onClick={logout} title="Sair"><LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-border bg-card/50 backdrop-blur flex items-center justify-between px-4 md:px-8 sticky top-0 z-30">
-          <div>
-            <h1 className="text-lg md:text-xl font-bold">{current?.label ?? "Dashboard"}</h1>
-            <p className="hidden md:block text-xs text-muted-foreground">Bem-vindo, {username} 👋</p>
+      {/* Mobile header */}
+      <header className="md:hidden border-b border-border bg-card px-4 py-3 flex items-center justify-between">
+        <Link to="/app/servidores" className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow grid place-items-center">
+            <DiscordIcon className="h-4 w-4 text-white" />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 px-3 h-9 rounded-lg bg-secondary border border-border w-64">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <input placeholder="Buscar..." className="bg-transparent flex-1 outline-none text-sm placeholder:text-muted-foreground" />
-            </div>
-            <button className="h-9 w-9 rounded-lg bg-secondary border border-border grid place-items-center hover:bg-primary/20 transition-smooth">
-              <Bell className="h-4 w-4" />
-            </button>
-            <div className="px-3 h-9 rounded-lg bg-success/15 text-success border border-success/30 flex items-center text-sm font-semibold">
-              R$ {balance.toFixed(2)}
-            </div>
-            <Button size="icon" variant="ghost" className="md:hidden h-9 w-9" onClick={logout}>
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        </header>
+          <span className="font-bold">ServerBoost</span>
+        </Link>
+        <Button size="icon" variant="ghost" onClick={logout}><LogOut className="h-4 w-4" /></Button>
+      </header>
 
-        <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-sidebar border-t border-sidebar-border flex justify-around py-2">
-          {navItems.slice(0, 5).map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-[10px] ${
-                  isActive ? "text-primary" : "text-muted-foreground"
-                }`
-              }
-            >
-              <item.icon className="h-5 w-5" />
-              {item.label.split(" ")[0]}
-            </NavLink>
-          ))}
-        </nav>
+      {/* Main */}
+      <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 overflow-x-hidden">
+        <Outlet />
+      </main>
 
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 animate-fade-in">
-          <Outlet />
-        </main>
-      </div>
+      {/* Mobile bottom nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border flex z-50">
+        {nav.map((n) => (
+          <NavLink key={n.to} to={n.to} end className={({ isActive }) =>
+            `flex-1 flex flex-col items-center gap-1 py-3 text-xs ${isActive ? "text-primary" : "text-muted-foreground"}`
+          }>
+            <n.icon className="h-5 w-5" />
+            {n.label.split(" ")[0]}
+          </NavLink>
+        ))}
+        <Link to="/app/campanhas/nova" className="flex-1 flex flex-col items-center gap-1 py-3 text-xs text-foreground">
+          <Plus className="h-5 w-5" /> Nova
+        </Link>
+      </nav>
     </div>
   );
 };
