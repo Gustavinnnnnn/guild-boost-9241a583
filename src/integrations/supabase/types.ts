@@ -237,6 +237,54 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_deposits: {
+        Row: {
+          amount_cents: number
+          coins: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          paid_at: string | null
+          paradise_transaction_id: string | null
+          qr_code: string | null
+          qr_code_base64: string | null
+          reference: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          coins: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          paradise_transaction_id?: string | null
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          reference: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          coins?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          paid_at?: string | null
+          paradise_transaction_id?: string | null
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          reference?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
