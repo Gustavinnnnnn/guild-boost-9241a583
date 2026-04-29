@@ -5,9 +5,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { Button } from "@/components/ui/button";
 import {
-  Coins, Megaphone, Send, MousePointerClick, Plus, Users, Ban, MailX,
+  Wallet, Megaphone, Send, MousePointerClick, Plus, Users, Ban, MailX,
   UserX, AlertTriangle, TrendingUp, Sparkles, ArrowUpRight, Zap,
 } from "lucide-react";
+import { formatBRL, centsToDms, CENTS_PER_DM } from "@/lib/ads";
 
 const Card = ({ icon: Icon, label, value, accent, sub, gradient }: { icon: any; label: string; value: string | number; accent?: string; sub?: string; gradient?: string }) => (
   <div className={`group relative rounded-2xl border border-border p-4 overflow-hidden transition-all hover:border-primary/40 hover:-translate-y-0.5 ${gradient ?? "bg-card"}`}>
