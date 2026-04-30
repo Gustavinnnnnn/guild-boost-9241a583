@@ -1,6 +1,7 @@
 import { Navigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import Landing from "./Landing";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -12,7 +13,6 @@ const Index = () => {
     if (ref) {
       try {
         localStorage.setItem("aff_ref", ref);
-        // tracking de clique (sem auth)
         fetch(`https://srwdikhfrfdmhlfdklzj.supabase.co/functions/v1/track-referral`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -22,8 +22,16 @@ const Index = () => {
     }
   }, [params]);
 
-  if (loading) return <div className="min-h-screen grid place-items-center bg-background"><div className="h-10 w-10 rounded-full border-4 border-primary border-t-transparent animate-spin" /></div>;
-  return <Navigate to={user ? "/app" : "/auth"} replace />;
+  if (loading) {
+    return (
+      <div className="min-h-screen grid place-items-center bg-background">
+        <div className="h-10 w-10 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  if (user) return <Navigate to="/app" replace />;
+  return <Landing />;
 };
 
 export default Index;
