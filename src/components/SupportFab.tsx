@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { HelpCircle, X } from "lucide-react";
+import { X } from "lucide-react";
 import { DiscordIcon } from "@/components/DiscordIcon";
+import supportMascot from "@/assets/support-mascot.png";
 
 const DISCORD_URL = "https://discord.gg/YBWcN4EddG";
 const WHATSAPP_URL =
@@ -71,16 +72,25 @@ export const SupportFab = () => {
         </div>
       </div>
 
-      {/* FAB */}
+      {/* FAB - Mascote */}
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Fechar suporte" : "Abrir suporte"}
-        className="group relative h-12 w-12 rounded-full bg-card border border-border shadow-lg hover:border-primary/60 hover:shadow-glow transition-all grid place-items-center"
+        className="group relative h-16 w-16 grid place-items-center transition-transform hover:scale-110 active:scale-95"
       >
+        {/* Glow */}
+        <span className="absolute inset-0 rounded-full bg-[#5865F2]/40 blur-2xl opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
         {open ? (
-          <X className="h-[18px] w-[18px] text-foreground" />
+          <span className="relative h-12 w-12 rounded-full bg-card border border-border shadow-lg grid place-items-center">
+            <X className="h-5 w-5 text-foreground" />
+          </span>
         ) : (
-          <HelpCircle className="h-[18px] w-[18px] text-foreground group-hover:text-primary transition-colors" />
+          <img
+            src={supportMascot}
+            alt="Suporte"
+            className="relative h-16 w-16 object-contain drop-shadow-[0_4px_12px_rgba(88,101,242,0.5)]"
+            draggable={false}
+          />
         )}
       </button>
     </div>
