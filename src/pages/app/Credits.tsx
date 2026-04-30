@@ -21,8 +21,8 @@ type Tx = {
 
 // 1 DM = R$ 0,05  (internamente armazenado como "coins" no DB, mas exibimos sempre como DMs)
 const PRICE_PER_DM = 0.05;
-const MIN_DEPOSIT_BRL = 50;
-const MIN_DMS = Math.round(MIN_DEPOSIT_BRL / PRICE_PER_DM); // 1000
+const MIN_DEPOSIT_BRL = 25;
+const MIN_DMS = Math.round(MIN_DEPOSIT_BRL / PRICE_PER_DM); // 500
 
 const dmsToBRL = (dms: number) => dms * PRICE_PER_DM;
 const brlToDms = (brl: number) => Math.floor(brl / PRICE_PER_DM);
