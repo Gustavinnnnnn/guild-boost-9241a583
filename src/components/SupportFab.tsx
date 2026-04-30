@@ -76,19 +76,19 @@ export const SupportFab = () => {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Fechar suporte" : "Abrir suporte"}
-        className="group relative h-16 w-16 grid place-items-center transition-transform hover:scale-110 active:scale-95"
+        className="group relative h-24 w-24 grid place-items-center transition-transform hover:scale-110 active:scale-95"
       >
         {/* Glow */}
-        <span className="absolute inset-0 rounded-full bg-[#5865F2]/40 blur-2xl opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+        <span className="absolute inset-2 rounded-full bg-[#5865F2]/50 blur-2xl opacity-80 group-hover:opacity-100 transition-opacity animate-pulse" aria-hidden="true" />
         {open ? (
-          <span className="relative h-12 w-12 rounded-full bg-card border border-border shadow-lg grid place-items-center">
-            <X className="h-5 w-5 text-foreground" />
+          <span className="relative h-14 w-14 rounded-full bg-card border border-border shadow-lg grid place-items-center">
+            <X className="h-6 w-6 text-foreground" />
           </span>
         ) : (
           <img
             src={supportMascot}
             alt="Suporte"
-            className="relative h-16 w-16 object-contain drop-shadow-[0_4px_12px_rgba(88,101,242,0.5)]"
+            className="relative h-24 w-24 object-contain drop-shadow-[0_6px_20px_rgba(88,101,242,0.6)]"
             draggable={false}
           />
         )}
