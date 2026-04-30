@@ -330,7 +330,7 @@ const Credits = () => {
                         value={customBRL}
                         onChange={(e) => setCustomBRL(e.target.value)}
                         className="pl-10 h-12 text-xl font-black tabular-nums"
-                        placeholder="20"
+                        placeholder="50"
                       />
                     </div>
                   </div>
