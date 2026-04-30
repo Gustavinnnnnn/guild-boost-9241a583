@@ -55,6 +55,7 @@ const Auth = () => {
           {!clientId && <p className="text-xs text-muted-foreground mt-3">Carregando...</p>}
         </div>
       </div>
+      <SupportFab />
     </div>
   );
 };
