@@ -519,7 +519,7 @@ const Landing = () => {
               },
               {
                 q: "Quanto custa exatamente cada DM?",
-                a: "R$ 0,05 por DM. R$ 50 = 1.000 DMs. R$ 100 = 2.200 DMs (com bônus). R$ 200 = 4.500 DMs. Pode escolher qualquer valor a partir de R$ 50.",
+                a: "R$ 0,05 por DM. R$ 25 = 500 DMs. R$ 50 = 1.000 DMs. R$ 100 = 2.200 DMs (com bônus). R$ 200 = 4.500 DMs. Pode escolher qualquer valor a partir de R$ 25.",
               },
               {
                 q: "Em quanto tempo a campanha começa?",
