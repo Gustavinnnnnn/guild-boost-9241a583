@@ -10,107 +10,106 @@ import {
   Loader2,
   ArrowRight,
   Check,
-  Zap,
   Target,
   ShieldCheck,
-  TrendingUp,
   MessageSquare,
   Users,
   Plus,
   Send,
-  BadgeCheck,
   MousePointerClick,
   WalletCards,
   Flame,
   Crown,
   BarChart3,
+  Megaphone,
+  Sparkles,
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
-const painPoints = [
-  "Servidor bonito, canais prontos, mas ninguém entra.",
-  "Post em rede social morre com meia dúzia de views.",
-  "Ads caro demais pra trazer gente realmente interessada.",
-  "Grupo VIP, loja ou comunidade sem movimento diário.",
+const plans = [
+  {
+    name: "Start",
+    price: 30,
+    dms: 150,
+    hook: "teste sem arriscar alto",
+    features: ["150 DMs segmentadas", "PIX com liberação automática", "Painel de campanha", "Suporte no Discord"],
+  },
+  {
+    name: "Scale",
+    price: 50,
+    dms: 275,
+    hook: "mais volume no primeiro disparo",
+    badge: "+25 DMs bônus",
+    features: ["250 DMs + 25 bônus", "Segmentação por nicho", "Métricas no painel", "Suporte no Discord"],
+  },
+  {
+    name: "Dominação",
+    price: 150,
+    dms: 900,
+    hook: "o plano que mais compensa",
+    badge: "+150 DMs bônus",
+    highlight: true,
+    features: ["750 DMs + 150 bônus", "Campanhas maiores", "Métricas em tempo real", "Suporte prioritário"],
+  },
+  {
+    name: "Autoridade",
+    price: 250,
+    dms: 1700,
+    hook: "para lançar pesado",
+    badge: "+450 DMs bônus",
+    features: ["1.250 DMs + 450 bônus", "Segmentação avançada", "Mais alcance por compra", "Suporte VIP"],
+  },
 ];
 
-const benefits = [
+const proofStats = [
+  { value: "R$30", label: "entrada mínima" },
+  { value: "150", label: "DMs no start" },
+  { value: "PIX", label: "crédito rápido" },
+  { value: "0", label: "mensalidade" },
+];
+
+const objections = [
+  "Post no Instagram passa batido.",
+  "Servidor vazio quebra confiança.",
+  "Tráfego pago fica caro rápido.",
+  "Divulgação genérica atrai curioso, não comprador.",
+];
+
+const outcomes = [
   {
     icon: Target,
-    title: "Público certo",
-    text: "A campanha mira pessoas por nicho, região e interesse — não um público aleatório.",
+    title: "A pessoa certa recebe o convite",
+    text: "Você mira por nicho e interesse para não queimar crédito com público aleatório.",
   },
   {
     icon: MessageSquare,
-    title: "Mensagem direta",
-    text: "Seu convite chega na DM com copy e link do seu projeto, servidor, loja ou grupo.",
+    title: "A oferta chega direto na DM",
+    text: "Nada de esperar algoritmo ajudar. Sua chamada vai para uma conversa privada.",
   },
   {
     icon: BarChart3,
-    title: "Controle total",
-    text: "Você acompanha créditos, campanhas e resultados pelo painel sem depender de suporte.",
+    title: "Você acompanha o que importa",
+    text: "Créditos, campanhas e entrega ficam visíveis no painel depois do login.",
   },
 ];
 
-const steps = [
-  { n: "01", title: "Conecta no Discord", text: "Login rápido, sem formulário gigante." },
-  { n: "02", title: "Escolhe o plano", text: "Créditos caem após o PIX aprovado." },
-  { n: "03", title: "Define a campanha", text: "Nicho, link e mensagem do seu jeito." },
-  { n: "04", title: "Recebe tráfego", text: "A entrega começa e você acompanha tudo." },
-];
-
-const plans = [
-  {
-    name: "Starter",
-    price: 30,
-    dms: 150,
-    sub: "Pra validar rápido",
-    features: ["150 DMs entregues", "Painel completo", "Pagamento via PIX", "Suporte via Discord"],
-  },
-  {
-    name: "Plus",
-    price: 50,
-    dms: 275,
-    sub: "Mais entrada por real",
-    badge: "+10% bônus",
-    features: ["250 DMs + 25 bônus", "Segmentação por nicho", "Painel completo", "Suporte via Discord"],
-  },
-  {
-    name: "Pro",
-    price: 150,
-    dms: 900,
-    sub: "Mais escolhido",
-    badge: "+20% bônus",
-    highlight: true,
-    features: ["750 DMs + 150 bônus", "Segmentação por nicho", "Métricas em tempo real", "Suporte prioritário"],
-  },
-  {
-    name: "Business",
-    price: 250,
-    dms: 1700,
-    sub: "Melhor custo por DM",
-    badge: "+36% bônus",
-    features: ["1.250 DMs + 450 bônus", "Segmentação avançada", "Métricas em tempo real", "Suporte VIP no Discord"],
-  },
-];
-
-const faq = [
-  {
-    q: "Isso é para quem?",
-    a: "Para donos de servidor Discord, comunidades, grupos VIP, lojas, canais e projetos que precisam colocar o link na frente de pessoas com interesse real.",
-  },
-  {
-    q: "Quanto custa cada DM?",
-    a: "A base é R$ 0,20 por DM. Os planos maiores incluem bônus, então o custo real por DM fica até 36% mais barato.",
-  },
-  {
-    q: "Quando começa a entrega?",
-    a: "Depois que o PIX é confirmado, seus créditos entram e a campanha pode começar em poucos minutos pelo painel.",
-  },
+const faqs = [
   {
     q: "Preciso pagar mensalidade?",
-    a: "Não. Você compra créditos quando quiser, usa no seu ritmo e mantém os créditos restantes na conta.",
+    a: "Não. Você compra créditos, usa quando quiser e volta só quando quiser mais volume.",
+  },
+  {
+    q: "O mínimo continua quanto?",
+    a: "O plano de entrada é R$30 com 150 DMs. Os planos maiores têm bônus de volume.",
+  },
+  {
+    q: "Quando os créditos caem?",
+    a: "Depois da confirmação do PIX, os créditos entram automaticamente para você criar a campanha.",
+  },
+  {
+    q: "Serve só para servidor Discord?",
+    a: "Funciona muito bem para servidor, comunidade, grupo VIP, loja, lançamento e link de oferta.",
   },
 ];
 
@@ -170,27 +169,26 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased overflow-x-hidden">
-      <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-8">
-          <a href="#" className="flex items-center gap-3" aria-label="ServerBoost">
-            <img src={logo} alt="ServerBoost" className="h-10 w-10 rounded-xl object-cover ring-1 ring-border" width={40} height={40} />
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/92 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
+          <a href="#" className="flex min-w-0 items-center gap-3" aria-label="ServerBoost">
+            <img src={logo} alt="ServerBoost" className="h-10 w-10 rounded-md object-cover ring-1 ring-border" width={40} height={40} />
             <div className="leading-none">
-              <span className="block text-base font-black tracking-tight">ServerBoost</span>
-              <span className="mt-1 block text-[10px] font-bold uppercase text-muted-foreground">tráfego para Discord</span>
+              <span className="block text-base font-black">ServerBoost</span>
+              <span className="mt-1 hidden text-[10px] font-black uppercase text-muted-foreground sm:block">DM segmentada para Discord</span>
             </div>
           </a>
 
-          <nav className="hidden items-center gap-1 text-sm md:flex">
+          <nav className="hidden items-center gap-1 text-sm lg:flex">
             {[
-              { id: "beneficios", label: "Benefícios" },
-              { id: "como", label: "Como funciona" },
-              { id: "preco", label: "Planos" },
-              { id: "faq", label: "FAQ" },
+              { id: "planos", label: "Planos" },
+              { id: "prova", label: "Prova" },
+              { id: "faq", label: "Dúvidas" },
             ].map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className="rounded-full px-4 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                className="rounded-md px-4 py-2 font-bold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               >
                 {item.label}
               </button>
@@ -200,7 +198,7 @@ const Landing = () => {
           <button
             onClick={loginWithDiscord}
             disabled={busy}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground shadow-glow transition-all hover:bg-primary-glow disabled:opacity-60 md:px-5"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-black text-primary-foreground shadow-glow transition-all hover:bg-primary-glow disabled:opacity-60"
           >
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <DiscordIcon className="h-4 w-4" />}
             <span>{user ? "Painel" : "Entrar"}</span>
@@ -208,234 +206,171 @@ const Landing = () => {
         </div>
       </header>
 
-      <main>
-        <section className="relative border-b border-border bg-hero-grid">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-primary" />
-          <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-10 px-5 py-12 md:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:py-16">
-            <div className="max-w-3xl">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground shadow-card">
+      <main className="pt-16">
+        <section className="relative overflow-hidden border-b border-border bg-landing-stage">
+          <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl gap-8 px-4 py-8 md:px-8 lg:grid-cols-[1.03fr_0.97fr] lg:items-center lg:py-12">
+            <div className="relative z-10 max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-xs font-black uppercase text-muted-foreground shadow-card">
                 <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                <span>{liveCount.toLocaleString("pt-BR")} DMs já entregues</span>
+                {liveCount.toLocaleString("pt-BR")} DMs entregues
               </div>
 
-              <h1 className="font-display text-[clamp(2.6rem,7vw,6.2rem)] font-black leading-[0.92] tracking-tight">
-                Coloque seu Discord na frente de quem realmente entra.
+              <h1 className="font-display text-[clamp(3rem,9vw,7.4rem)] font-black leading-[0.84]">
+                Seu Discord não pode parecer vazio.
               </h1>
 
-              <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-                Campanhas de DM segmentadas para levar pessoas reais para seu servidor, loja, grupo VIP ou lançamento — sem depender de post que flopou ou anúncio caro.
+              <p className="mt-6 max-w-2xl text-lg font-semibold leading-relaxed text-muted-foreground md:text-xl">
+                Compre créditos, crie uma campanha e coloque seu convite na DM de gente com interesse real no seu nicho.
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <button
                   onClick={loginWithDiscord}
                   disabled={busy}
-                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-full bg-primary px-7 text-base font-black text-primary-foreground shadow-glow transition-all hover:bg-primary-glow disabled:opacity-60"
+                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-md bg-primary px-7 text-base font-black text-primary-foreground shadow-glow transition-all hover:bg-primary-glow disabled:opacity-60"
                 >
                   {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <DiscordIcon className="h-5 w-5" />}
-                  Começar pelo Discord
+                  Comprar créditos
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </button>
                 <button
-                  onClick={() => scrollTo("preco")}
-                  className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-border bg-card px-7 text-base font-bold text-foreground transition-colors hover:border-primary hover:bg-secondary"
+                  onClick={() => scrollTo("planos")}
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-md border border-border bg-card px-7 text-base font-black text-foreground transition-colors hover:border-primary hover:bg-secondary"
                 >
                   Ver planos
                 </button>
               </div>
 
-              <div className="mt-8 grid max-w-xl grid-cols-3 gap-3">
-                {[
-                  { value: "5 min", label: "setup" },
-                  { value: "PIX", label: "libera rápido" },
-                  { value: "R$30", label: "mínimo" },
-                ].map((item) => (
+              <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {proofStats.map((item) => (
                   <div key={item.label} className="border-l border-border pl-3">
-                    <div className="font-display text-2xl font-black tracking-tight">{item.value}</div>
-                    <div className="mt-1 text-[10px] font-bold uppercase text-muted-foreground">{item.label}</div>
+                    <div className="font-display text-3xl font-black leading-none">{item.value}</div>
+                    <div className="mt-2 text-[10px] font-black uppercase text-muted-foreground">{item.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[520px] lg:mr-0">
-              <div className="absolute -left-4 top-10 hidden rounded-2xl border border-border bg-card px-4 py-3 shadow-card md:flex">
-                <TrendingUp className="mr-3 h-5 w-5 text-success" />
-                <div>
-                  <div className="text-sm font-black">+847 cliques hoje</div>
-                  <div className="text-xs text-muted-foreground">campanhas ativas</div>
-                </div>
+            <div className="relative z-10 mx-auto w-full max-w-[560px] lg:mr-0">
+              <div className="mb-3 grid grid-cols-3 gap-2 text-center text-xs font-black uppercase">
+                <div className="rounded-md border border-border bg-card p-3 text-muted-foreground">campanha</div>
+                <div className="rounded-md border border-primary bg-primary p-3 text-primary-foreground">entrega</div>
+                <div className="rounded-md border border-border bg-card p-3 text-muted-foreground">resultado</div>
               </div>
 
-              <div className="rounded-[2rem] border border-border bg-card p-3 shadow-card">
-                <div className="overflow-hidden rounded-[1.45rem] border border-border bg-background">
-                  <div className="flex items-center gap-3 border-b border-border bg-secondary px-4 py-3">
-                    <DiscordIcon className="h-5 w-5 text-primary" />
-                    <div className="flex-1">
-                      <div className="text-sm font-black">Campanha #1284</div>
-                      <div className="text-xs text-muted-foreground">Servidor de games • Brasil</div>
+              <div className="overflow-hidden rounded-md border border-border bg-card shadow-card">
+                <div className="flex items-center justify-between border-b border-border bg-secondary px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground">
+                      <Megaphone className="h-5 w-5" />
                     </div>
-                    <span className="rounded-full bg-success px-2.5 py-1 text-[10px] font-black uppercase text-success-foreground">ativa</span>
+                    <div>
+                      <div className="text-sm font-black">Campanha rodando</div>
+                      <div className="text-xs text-muted-foreground">Games • Brasil • convite direto</div>
+                    </div>
+                  </div>
+                  <span className="rounded-md bg-success px-2 py-1 text-[10px] font-black uppercase text-success-foreground">ativa</span>
+                </div>
+
+                <div className="grid gap-0 md:grid-cols-[1fr_0.82fr]">
+                  <div className="border-b border-border p-4 md:border-b-0 md:border-r">
+                    <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase text-muted-foreground">
+                      <Send className="h-4 w-4 text-primary" /> prévia da DM
+                    </div>
+                    <div className="rounded-md bg-background p-4 text-sm font-semibold leading-relaxed text-foreground">
+                      Vi que você curte comunidade de games. Abrimos um Discord BR com eventos, call ativa e sorteios semanais.
+                      <div className="mt-4 rounded-md border border-primary bg-primary/10 px-3 py-2 font-black text-primary">discord.gg/seulink</div>
+                    </div>
                   </div>
 
-                  <div className="space-y-4 p-4">
-                    <div className="rounded-2xl bg-secondary p-4">
-                      <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground">
-                        <Send className="h-4 w-4 text-primary" /> Prévia da DM
+                  <div className="grid grid-cols-3 gap-px bg-border md:grid-cols-1">
+                    {[
+                      { icon: Send, value: "900", label: "DMs" },
+                      { icon: MousePointerClick, value: "137", label: "cliques" },
+                      { icon: Users, value: "62", label: "entradas" },
+                    ].map((metric) => (
+                      <div key={metric.label} className="bg-card p-4">
+                        <metric.icon className="mb-3 h-4 w-4 text-primary" />
+                        <div className="font-display text-3xl font-black leading-none">{metric.value}</div>
+                        <div className="mt-2 text-[10px] font-black uppercase text-muted-foreground">{metric.label}</div>
                       </div>
-                      <div className="rounded-2xl bg-card p-4 text-sm leading-relaxed text-card-foreground">
-                        Ei, vi que você curte servidores de game. Estamos abrindo uma comunidade BR com eventos, call ativa e sorteios toda semana. Entra aqui 👇
-                        <div className="mt-3 rounded-xl border border-primary/40 bg-primary/10 px-3 py-2 font-bold text-primary">discord.gg/seulink</div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { icon: Send, value: "1.100", label: "DMs" },
-                        { icon: MousePointerClick, value: "162", label: "cliques" },
-                        { icon: Users, value: "74", label: "entradas" },
-                      ].map((metric) => (
-                        <div key={metric.label} className="rounded-2xl border border-border bg-card p-3">
-                          <metric.icon className="mb-2 h-4 w-4 text-primary" />
-                          <div className="font-display text-xl font-black tracking-tight">{metric.value}</div>
-                          <div className="text-[10px] font-bold uppercase text-muted-foreground">{metric.label}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="rounded-2xl border border-border bg-card p-4">
-                      <div className="mb-3 flex items-center justify-between">
-                        <span className="text-sm font-black">Entrega em andamento</span>
-                        <span className="text-xs font-bold text-success">78%</span>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-secondary">
-                        <div className="h-full w-[78%] rounded-full bg-gradient-primary" />
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              <div className="absolute -bottom-5 right-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-card">
-                <div className="flex items-center gap-2 text-sm font-black">
-                  <BadgeCheck className="h-5 w-5 text-success" /> Público segmentado
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <div className="rounded-md border border-border bg-card p-4">
+                  <Sparkles className="mb-3 h-5 w-5 text-warning" />
+                  <div className="font-black">Sem mensalidade</div>
+                  <div className="mt-1 text-xs text-muted-foreground">comprou, usou</div>
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground">nicho + região + interesse</div>
+                <div className="rounded-md border border-border bg-card p-4">
+                  <ShieldCheck className="mb-3 h-5 w-5 text-success" />
+                  <div className="font-black">Painel próprio</div>
+                  <div className="mt-1 text-xs text-muted-foreground">tudo no login</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="border-b border-border bg-card/40">
-          <div className="mx-auto grid max-w-7xl gap-5 px-5 py-6 md:grid-cols-4 md:px-8">
-            {painPoints.map((point) => (
-              <div key={point} className="flex items-start gap-3 rounded-2xl border border-border bg-background p-4">
+        <section className="border-b border-border bg-card/35">
+          <div className="mx-auto grid max-w-7xl gap-px bg-border px-0 md:grid-cols-4">
+            {objections.map((point) => (
+              <div key={point} className="flex items-start gap-3 bg-background p-5 md:p-6">
                 <Flame className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
-                <p className="text-sm font-semibold leading-relaxed text-muted-foreground">{point}</p>
+                <p className="text-sm font-black leading-relaxed text-foreground">{point}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <section id="beneficios" className="border-b border-border">
-          <div className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-            <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+        <section id="planos" className="border-b border-border">
+          <div className="mx-auto max-w-7xl px-4 py-14 md:px-8 md:py-20">
+            <div className="mb-10 grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
               <div>
-                <div className="mb-4 text-xs font-black uppercase text-primary">Por que converte</div>
-                <h2 className="font-display text-4xl font-black leading-tight tracking-tight md:text-6xl">
-                  Não é “mais uma divulgação”. É tráfego direto para o seu link.
-                </h2>
+                <div className="mb-3 text-xs font-black uppercase text-primary">Planos sem mensalidade</div>
+                <h2 className="font-display text-4xl font-black leading-tight md:text-6xl">Preço simples. Volume que faz sentido.</h2>
               </div>
-              <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground lg:ml-auto">
-                A landing agora mostra o que o cliente compra: alcance direcionado, mensagem pronta para ação e um painel simples para transformar créditos em entrada real.
+              <p className="max-w-2xl text-lg font-semibold leading-relaxed text-muted-foreground lg:ml-auto lg:text-right">
+                O plano barato valida. Os planos maiores dão bônus para quem quer volume de verdade.
               </p>
             </div>
 
-            <div className="mt-12 grid gap-4 md:grid-cols-3">
-              {benefits.map((item) => (
-                <article key={item.title} className="group rounded-3xl border border-border bg-card p-7 transition-all hover:-translate-y-1 hover:border-primary">
-                  <div className="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-glow transition-transform group-hover:scale-105">
-                    <item.icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-black tracking-tight">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="como" className="border-b border-border bg-secondary/30">
-          <div className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-            <div className="mx-auto max-w-3xl text-center">
-              <div className="mb-4 text-xs font-black uppercase text-primary">Fluxo simples</div>
-              <h2 className="font-display text-4xl font-black leading-tight tracking-tight md:text-6xl">
-                Do pagamento à campanha rodando sem enrolação.
-              </h2>
-            </div>
-
-            <div className="mt-14 grid gap-4 md:grid-cols-4">
-              {steps.map((step) => (
-                <div key={step.n} className="relative rounded-3xl border border-border bg-card p-6">
-                  <div className="mb-8 flex items-center justify-between">
-                    <span className="font-display text-5xl font-black text-secondary">{step.n}</span>
-                    <Zap className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-black tracking-tight">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="preco" className="border-b border-border">
-          <div className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-            <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-              <div className="max-w-2xl">
-                <div className="mb-4 text-xs font-black uppercase text-primary">Planos</div>
-                <h2 className="font-display text-4xl font-black leading-tight tracking-tight md:text-6xl">
-                  Escolha quantas DMs quer colocar na rua.
-                </h2>
-              </div>
-              <p className="max-w-md text-muted-foreground md:text-right">
-                Sem mensalidade. Sem cartão. Comprou, os créditos ficam na sua conta e você usa quando quiser.
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {plans.map((plan) => (
                 <article
                   key={plan.name}
-                  className={`relative rounded-3xl p-6 transition-all hover:-translate-y-1 ${
+                  className={`relative rounded-md p-5 transition-all hover:-translate-y-1 ${
                     plan.highlight ? "bg-primary text-primary-foreground shadow-glow" : "border border-border bg-card hover:border-primary"
                   }`}
                 >
                   {plan.highlight && (
-                    <div className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-[10px] font-black uppercase text-background">
-                      <Crown className="h-3 w-3" /> Mais comprado
+                    <div className="absolute -top-3 left-4 inline-flex items-center gap-1 rounded-md bg-foreground px-3 py-1 text-[10px] font-black uppercase text-background">
+                      <Crown className="h-3 w-3" /> Mais forte
                     </div>
                   )}
-                  <div className={`text-xs font-black uppercase ${plan.highlight ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{plan.sub}</div>
-                  <h3 className="mt-2 text-2xl font-black tracking-tight">{plan.name}</h3>
-                  <div className="mt-6 flex items-end gap-1">
-                    <span className="font-display text-5xl font-black tracking-tight">R${plan.price}</span>
-                    <span className={`pb-2 text-xs font-bold ${plan.highlight ? "text-primary-foreground/75" : "text-muted-foreground"}`}>PIX</span>
+                  <div className={`text-xs font-black uppercase ${plan.highlight ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{plan.hook}</div>
+                  <h3 className="mt-2 text-2xl font-black">{plan.name}</h3>
+                  <div className="mt-5 flex items-end gap-1">
+                    <span className="font-display text-5xl font-black leading-none">R${plan.price}</span>
+                    <span className={`pb-1 text-xs font-black ${plan.highlight ? "text-primary-foreground/75" : "text-muted-foreground"}`}>PIX</span>
                   </div>
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <span className="text-lg font-black">{plan.dms.toLocaleString("pt-BR")} DMs</span>
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <span className="text-xl font-black">{plan.dms.toLocaleString("pt-BR")} DMs</span>
                     {plan.badge && (
-                      <span className={`rounded-full px-2 py-1 text-[10px] font-black uppercase ${plan.highlight ? "bg-foreground text-background" : "bg-success text-success-foreground"}`}>
+                      <span className={`rounded-md px-2 py-1 text-[10px] font-black uppercase ${plan.highlight ? "bg-foreground text-background" : "bg-success text-success-foreground"}`}>
                         {plan.badge}
                       </span>
                     )}
                   </div>
-                  <div className={`mt-2 text-xs ${plan.highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                  <div className={`mt-2 text-xs font-bold ${plan.highlight ? "text-primary-foreground/75" : "text-muted-foreground"}`}>
                     ≈ R$ {(plan.price / plan.dms).toFixed(3).replace(".", ",")} por DM
                   </div>
 
-                  <div className={`my-6 h-px ${plan.highlight ? "bg-primary-foreground/20" : "bg-border"}`} />
-                  <ul className="space-y-3 text-sm">
+                  <div className={`my-5 h-px ${plan.highlight ? "bg-primary-foreground/20" : "bg-border"}`} />
+                  <ul className="space-y-3 text-sm font-semibold">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex gap-2">
                         <Check className="mt-0.5 h-4 w-4 shrink-0" />
@@ -447,11 +382,11 @@ const Landing = () => {
                   <button
                     onClick={loginWithDiscord}
                     disabled={busy}
-                    className={`mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-black transition-colors disabled:opacity-60 ${
+                    className={`mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md text-sm font-black transition-colors disabled:opacity-60 ${
                       plan.highlight ? "bg-foreground text-background hover:bg-background hover:text-foreground" : "bg-primary text-primary-foreground hover:bg-primary-glow"
                     }`}
                   >
-                    <WalletCards className="h-4 w-4" /> Escolher plano
+                    <WalletCards className="h-4 w-4" /> Comprar esse
                   </button>
                 </article>
               ))}
@@ -459,33 +394,55 @@ const Landing = () => {
           </div>
         </section>
 
+        <section id="prova" className="border-b border-border bg-secondary/30">
+          <div className="mx-auto max-w-7xl px-4 py-14 md:px-8 md:py-20">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+              <div>
+                <div className="mb-3 text-xs font-black uppercase text-primary">Por que isso vende melhor</div>
+                <h2 className="font-display text-4xl font-black leading-tight md:text-6xl">A oferta não fica esperando o algoritmo.</h2>
+                <button
+                  onClick={loginWithDiscord}
+                  disabled={busy}
+                  className="mt-7 inline-flex h-12 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-black text-primary-foreground transition-colors hover:bg-primary-glow disabled:opacity-60"
+                >
+                  Entrar e criar campanha <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-3">
+                {outcomes.map((item) => (
+                  <article key={item.title} className="rounded-md border border-border bg-card p-5">
+                    <div className="mb-5 grid h-11 w-11 place-items-center rounded-md bg-primary text-primary-foreground">
+                      <item.icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-black leading-tight">{item.title}</h3>
+                    <p className="mt-3 text-sm font-semibold leading-relaxed text-muted-foreground">{item.text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section id="afiliado" className="border-b border-border bg-gradient-primary text-primary-foreground">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 md:px-8 md:py-20 lg:grid-cols-[1fr_0.9fr] lg:items-center">
             <div>
-              <div className="mb-4 text-xs font-black uppercase text-primary-foreground/75">Afiliados</div>
-              <h2 className="font-display text-4xl font-black leading-tight tracking-tight md:text-6xl">
-                Indique a ServerBoost e receba 20% pra sempre.
-              </h2>
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-primary-foreground/85">
-                Cada compra feita pelo seu link gera comissão recorrente. Saque via PIX a partir de R$ 50.
+              <div className="mb-3 text-xs font-black uppercase text-primary-foreground/75">Afiliados</div>
+              <h2 className="font-display text-4xl font-black leading-tight md:text-6xl">Indique e ganhe 20% por compra.</h2>
+              <p className="mt-5 max-w-2xl text-lg font-semibold leading-relaxed text-primary-foreground/85">
+                Seu link vira comissão recorrente. Saque via PIX a partir de R$50.
               </p>
-              <button
-                onClick={loginWithDiscord}
-                className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-black text-background transition-colors hover:bg-background hover:text-foreground"
-              >
-                Virar afiliado <ArrowRight className="h-4 w-4" />
-              </button>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               {[
                 { value: "20%", label: "comissão" },
-                { value: "Vitalício", label: "por cliente" },
-                { value: "R$50", label: "saque mínimo" },
+                { value: "R$50", label: "saque" },
                 { value: "PIX", label: "pagamento" },
+                { value: "link", label: "próprio" },
               ].map((item) => (
-                <div key={item.label} className="rounded-3xl border border-primary-foreground/20 bg-primary-foreground/10 p-5 backdrop-blur">
-                  <div className="font-display text-3xl font-black tracking-tight">{item.value}</div>
+                <div key={item.label} className="rounded-md border border-primary-foreground/20 bg-primary-foreground/10 p-5 backdrop-blur">
+                  <div className="font-display text-3xl font-black">{item.value}</div>
                   <div className="mt-2 text-xs font-black uppercase text-primary-foreground/70">{item.label}</div>
                 </div>
               ))}
@@ -494,22 +451,22 @@ const Landing = () => {
         </section>
 
         <section id="faq" className="border-b border-border">
-          <div className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24">
-            <div className="mb-10 text-center">
-              <div className="mb-4 text-xs font-black uppercase text-primary">FAQ</div>
-              <h2 className="font-display text-4xl font-black tracking-tight md:text-5xl">Perguntas frequentes</h2>
+          <div className="mx-auto max-w-3xl px-4 py-14 md:px-8 md:py-20">
+            <div className="mb-8 text-center">
+              <div className="mb-3 text-xs font-black uppercase text-primary">Dúvidas rápidas</div>
+              <h2 className="font-display text-4xl font-black md:text-5xl">Antes de comprar</h2>
             </div>
 
             <div className="space-y-3">
-              {faq.map((item) => (
-                <details key={item.q} className="group rounded-2xl border border-border bg-card transition-colors hover:border-primary [&_summary::-webkit-details-marker]:hidden">
+              {faqs.map((item) => (
+                <details key={item.q} className="group rounded-md border border-border bg-card transition-colors hover:border-primary [&_summary::-webkit-details-marker]:hidden">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5">
                     <span className="text-base font-black md:text-lg">{item.q}</span>
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-secondary transition-transform group-open:rotate-45">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-secondary transition-transform group-open:rotate-45">
                       <Plus className="h-4 w-4" />
                     </span>
                   </summary>
-                  <p className="px-5 pb-5 leading-relaxed text-muted-foreground">{item.a}</p>
+                  <p className="px-5 pb-5 font-semibold leading-relaxed text-muted-foreground">{item.a}</p>
                 </details>
               ))}
             </div>
@@ -517,21 +474,20 @@ const Landing = () => {
         </section>
 
         <section className="bg-card">
-          <div className="mx-auto max-w-7xl px-5 py-16 text-center md:px-8 md:py-24">
-            <ShieldCheck className="mx-auto mb-6 h-12 w-12 text-primary" />
-            <h2 className="mx-auto max-w-4xl font-display text-4xl font-black leading-tight tracking-tight md:text-6xl">
-              Seu servidor não precisa parecer vazio.
+          <div className="mx-auto max-w-7xl px-4 py-14 text-center md:px-8 md:py-20">
+            <h2 className="mx-auto max-w-4xl font-display text-4xl font-black leading-tight md:text-6xl">
+              Coloca seu link na rua hoje.
             </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Entre com Discord, escolha um plano e transforme créditos em DMs segmentadas ainda hoje.
+            <p className="mx-auto mt-5 max-w-2xl text-lg font-semibold leading-relaxed text-muted-foreground">
+              Entra com Discord, escolhe o plano e transforma crédito em campanha.
             </p>
             <button
               onClick={loginWithDiscord}
               disabled={busy}
-              className="mt-8 inline-flex h-14 items-center justify-center gap-3 rounded-full bg-primary px-8 text-base font-black text-primary-foreground shadow-glow transition-colors hover:bg-primary-glow disabled:opacity-60"
+              className="mt-8 inline-flex h-14 items-center justify-center gap-3 rounded-md bg-primary px-8 text-base font-black text-primary-foreground shadow-glow transition-colors hover:bg-primary-glow disabled:opacity-60"
             >
               {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <DiscordIcon className="h-5 w-5" />}
-              Começar agora
+              Comprar créditos agora
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
@@ -539,17 +495,16 @@ const Landing = () => {
       </main>
 
       <footer className="border-t border-border bg-background">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-8 text-sm md:flex-row md:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-8 text-sm md:flex-row md:px-8">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="ServerBoost" className="h-8 w-8 rounded-lg object-cover" width={32} height={32} />
+            <img src={logo} alt="ServerBoost" className="h-8 w-8 rounded-md object-cover" width={32} height={32} />
             <span className="font-black">ServerBoost</span>
             <span className="text-xs text-muted-foreground">© {new Date().getFullYear()}</span>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-bold uppercase text-muted-foreground">
-            <button onClick={() => scrollTo("beneficios")} className="hover:text-foreground">Benefícios</button>
-            <button onClick={() => scrollTo("como")} className="hover:text-foreground">Como funciona</button>
-            <button onClick={() => scrollTo("preco")} className="hover:text-foreground">Planos</button>
-            <button onClick={() => scrollTo("faq")} className="hover:text-foreground">FAQ</button>
+          <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-black uppercase text-muted-foreground">
+            <button onClick={() => scrollTo("planos")} className="hover:text-foreground">Planos</button>
+            <button onClick={() => scrollTo("prova")} className="hover:text-foreground">Prova</button>
+            <button onClick={() => scrollTo("faq")} className="hover:text-foreground">Dúvidas</button>
           </div>
         </div>
       </footer>
