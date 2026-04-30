@@ -195,7 +195,7 @@ const Landing = () => {
               <p className="mt-7 text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 A gente coloca o link do seu servidor, loja ou projeto na DM de pessoas reais
                 do Discord — dentro do seu nicho. A partir de{" "}
-                <span className="text-foreground font-semibold">R$ 0,25 por DM</span>.
+                <span className="text-foreground font-semibold">R$ 0,05 por DM</span>.
               </p>
 
               <div className="mt-9 flex flex-col sm:flex-row items-center lg:items-stretch justify-center lg:justify-start gap-3">
@@ -236,7 +236,7 @@ const Landing = () => {
               </div>
 
               <p className="mt-6 text-xs text-muted-foreground font-mono">
-                ⚡ login em 5s · sem cartão · mínimo R$ 25
+                ⚡ login em 5s · sem cartão · mínimo R$ 30
               </p>
             </div>
 
@@ -766,7 +766,7 @@ const Landing = () => {
               },
               {
                 q: "Quanto custa exatamente cada DM?",
-                a: "A partir de R$ 0,25 por DM. R$ 25 = 100 DMs. R$ 100 = 550 DMs (com bônus, sai R$ 0,18/DM). R$ 250 = 1.250 DMs (com bônus, sai R$ 0,20/DM). Quanto maior o pacote, mais barato fica.",
+                a: "R$ 0,05 por DM. Plano Starter: R$ 30 = 600 DMs. Plus: R$ 50 = 1.100 DMs (com bônus). Pro: R$ 150 = 3.500 DMs (com bônus). Business: R$ 250 = 6.000 DMs (com bônus). Quanto maior o plano, mais bônus.",
               },
               {
                 q: "Em quanto tempo a campanha começa?",
