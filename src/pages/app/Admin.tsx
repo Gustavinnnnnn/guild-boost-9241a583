@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ type Stats = {
 };
 
 const Admin = () => {
+  const location = useLocation();
   const { isAdmin, loading } = useProfile();
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentCampaigns, setRecentCampaigns] = useState<any[]>([]);
@@ -98,7 +99,7 @@ const Admin = () => {
   useEffect(() => { if (isAdmin) { loadStats(); loadGuilds(); } }, [isAdmin]);
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
-  if (!isAdmin) return <Navigate to="/app" replace />;
+  if (!isAdmin) return <Navigate to={`/admin-login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
 
   const kpis = stats ? [
     { icon: Users, label: "Usuários", value: fmt(stats.totalUsers), color: "from-blue-500/20 to-blue-500/5", iconColor: "text-blue-400" },
