@@ -79,7 +79,51 @@ Deno.serve(async (req) => {
     });
 
     const paradiseData = await paradiseRes.json();
-    if (!paradiseRes.ok || paradiseData.status !== "success") {
+    console.log("Paradise response:", JSON.stringify(paradiseData));
+
+    // Paradise pode retornar campos com nomes diferentes — normaliza
+    const pixCode =
+      paradiseData.pix_code ||
+      paradiseData.qr_code ||
+      paradiseData.qrcode ||
+      paradiseData.qr_code_text ||
+      paradiseData.copy_paste ||
+      paradiseData.emv ||
+      paradiseData.payment?.pix_code ||
+      paradiseData.payment?.qr_code ||
+      paradiseData.data?.pix_code ||
+      paradiseData.data?.qr_code ||
+      "";
+
+    const pixBase64 =
+      paradiseData.qr_code_base64 ||
+      paradiseData.qr_code_image ||
+      paradiseData.qrcode_base64 ||
+      paradiseData.payment?.qr_code_base64 ||
+      paradiseData.data?.qr_code_base64 ||
+      "";
+
+    const txId =
+      paradiseData.transaction_id ||
+      paradiseData.id ||
+      paradiseData.data?.transaction_id ||
+      paradiseData.data?.id;
+
+    const expiresAt =
+      paradiseData.expires_at ||
+      paradiseData.expiration ||
+      paradiseData.payment?.expires_at ||
+      paradiseData.data?.expires_at ||
+      null;
+
+    const isOk =
+      paradiseRes.ok &&
+      (paradiseData.status === "success" ||
+        paradiseData.status === "pending" ||
+        paradiseData.success === true ||
+        !!pixCode);
+
+    if (!isOk || !pixCode) {
       console.error("Paradise error:", paradiseData);
       return new Response(JSON.stringify({ error: "gateway_error", details: paradiseData }), {
         status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -90,25 +134,25 @@ Deno.serve(async (req) => {
     const { error: insErr } = await admin.from("pending_deposits").insert({
       user_id: userId,
       reference,
-      paradise_transaction_id: String(paradiseData.transaction_id),
+      paradise_transaction_id: String(txId ?? reference),
       coins: totalCoins,
       amount_cents: amountCents,
       status: "pending",
-      qr_code: paradiseData.qr_code,
-      qr_code_base64: paradiseData.qr_code_base64,
-      expires_at: paradiseData.expires_at ? new Date(paradiseData.expires_at).toISOString() : null,
+      qr_code: pixCode,
+      qr_code_base64: pixBase64,
+      expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
     });
     if (insErr) console.error("Insert error:", insErr);
 
     return new Response(JSON.stringify({
       success: true,
       reference,
-      transaction_id: paradiseData.transaction_id,
-      qr_code: paradiseData.qr_code,
-      qr_code_base64: paradiseData.qr_code_base64,
+      transaction_id: txId,
+      qr_code: pixCode,
+      qr_code_base64: pixBase64,
       amount_cents: amountCents,
       coins: totalCoins,
-      expires_at: paradiseData.expires_at,
+      expires_at: expiresAt,
     }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown";
