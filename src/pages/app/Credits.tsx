@@ -229,19 +229,32 @@ const Credits = () => {
                   )}
                 </div>
 
-                {/* Slider fino */}
-                <div>
-                  <Slider
-                    min={MIN_DMS}
-                    max={5000}
-                    step={10}
-                    value={[Math.min(5000, Math.max(MIN_DMS, dmAmount))]}
-                    onValueChange={([v]) => setDmAmount(v)}
-                  />
-                  <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5 font-bold">
-                    <span>{MIN_DMS} DMs</span>
-                    <span>5.000 DMs</span>
-                  </div>
+                {/* Stepper +/- (melhor no mobile que slider) */}
+                <div className="grid grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDmAmount((v) => Math.max(MIN_DMS, v - 100))}
+                    className="h-12 rounded-xl border-2 border-border bg-background/40 hover:border-primary/40 active:scale-95 font-black text-sm transition select-none"
+                    aria-label="Diminuir 100"
+                  >−100</button>
+                  <button
+                    type="button"
+                    onClick={() => setDmAmount((v) => Math.max(MIN_DMS, v - 10))}
+                    className="h-12 rounded-xl border-2 border-border bg-background/40 hover:border-primary/40 active:scale-95 font-black text-base transition select-none"
+                    aria-label="Diminuir 10"
+                  >−10</button>
+                  <button
+                    type="button"
+                    onClick={() => setDmAmount((v) => Math.min(MAX_DMS, v + 10))}
+                    className="h-12 rounded-xl border-2 border-primary/40 bg-primary/10 text-primary hover:border-primary active:scale-95 font-black text-base transition select-none"
+                    aria-label="Aumentar 10"
+                  >+10</button>
+                  <button
+                    type="button"
+                    onClick={() => setDmAmount((v) => Math.min(MAX_DMS, v + 100))}
+                    className="h-12 rounded-xl border-2 border-primary/40 bg-primary/10 text-primary hover:border-primary active:scale-95 font-black text-sm transition select-none"
+                    aria-label="Aumentar 100"
+                  >+100</button>
                 </div>
 
                 {/* Atalhos */}
