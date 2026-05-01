@@ -16,8 +16,13 @@ Deno.serve(async (req) => {
   if (!code || !state) return new Response("Missing code or state", { status: 400 });
 
   let appOrigin: string;
+  let appRedirect = "/app";
   try {
-    appOrigin = JSON.parse(atob(state)).origin;
+    const parsedState = JSON.parse(atob(state));
+    appOrigin = parsedState.origin;
+    if (typeof parsedState.redirect === "string" && parsedState.redirect.startsWith("/")) {
+      appRedirect = parsedState.redirect;
+    }
   } catch {
     return new Response("Invalid state", { status: 400 });
   }
@@ -122,5 +127,6 @@ Deno.serve(async (req) => {
   const callbackUrl = new URL(`${appOrigin}/auth/callback`);
   callbackUrl.searchParams.set("token_hash", tokenHash);
   callbackUrl.searchParams.set("type", "magiclink");
+  callbackUrl.searchParams.set("redirect", appRedirect);
   return Response.redirect(callbackUrl.toString(), 302);
 });

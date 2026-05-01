@@ -20,6 +20,7 @@ const AuthCallback = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const token_hash = urlParams.get("token_hash");
       const type = urlParams.get("type") as "magiclink" | null;
+      const redirect = urlParams.get("redirect") || "/app";
 
       if (token_hash && type) {
         const { error } = await supabase.auth.verifyOtp({ token_hash, type });
@@ -40,7 +41,7 @@ const AuthCallback = () => {
         } catch (e) { console.warn("affiliate link error", e); }
 
         toast.success("Conectado com Discord!");
-        navigate("/app", { replace: true });
+        navigate(redirect, { replace: true });
         return;
       }
 
@@ -48,7 +49,7 @@ const AuthCallback = () => {
         // Maybe Supabase already auto-handled it via detectSessionInUrl
         const { data } = await supabase.auth.getSession();
         if (data.session) {
-          navigate("/app", { replace: true });
+          navigate(redirect, { replace: true });
           return;
         }
         toast.error("Sessão inválida. Tente entrar novamente.");
@@ -75,7 +76,7 @@ const AuthCallback = () => {
       } catch (e) { console.warn("affiliate link error", e); }
 
       toast.success("Conectado com Discord!");
-      navigate("/app", { replace: true });
+      navigate(redirect, { replace: true });
     };
     run();
   }, [navigate]);

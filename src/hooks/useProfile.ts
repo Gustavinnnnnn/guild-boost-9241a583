@@ -13,13 +13,15 @@ export type Profile = {
 };
 
 export const useProfile = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
+    if (authLoading) { setLoading(true); return; }
     if (!user) { setProfile(null); setIsAdmin(false); setLoading(false); return; }
+    setLoading(true);
     const [{ data }, { data: roles }] = await Promise.all([
       supabase.from("profiles")
         .select("id, username, avatar_url, discord_id, discord_username, discord_access_token, credits")
@@ -29,7 +31,7 @@ export const useProfile = () => {
     setProfile(data as Profile | null);
     setIsAdmin((roles ?? []).some((r: any) => r.role === "admin"));
     setLoading(false);
-  }, [user]);
+  }, [authLoading, user]);
 
   useEffect(() => { refresh(); }, [refresh]);
 

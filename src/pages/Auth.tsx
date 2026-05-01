@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,10 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 const Auth = () => {
   const { user, loading } = useAuth();
+  const [params] = useSearchParams();
   const [clientId, setClientId] = useState<string>("");
   const [busy, setBusy] = useState(false);
+  const redirect = params.get("redirect") || "/app";
 
   useEffect(() => {
     supabase.functions.invoke("discord-config").then(({ data }) => {
@@ -23,12 +25,12 @@ const Auth = () => {
   }, []);
 
   if (loading) return <div className="min-h-screen grid place-items-center bg-background"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
-  if (user) return <Navigate to="/app" replace />;
+  if (user) return <Navigate to={redirect} replace />;
 
   const loginWithDiscord = () => {
     if (!clientId) return toast.error("Configuração do Discord não carregada");
     setBusy(true);
-    const state = btoa(JSON.stringify({ origin: window.location.origin, nonce: crypto.randomUUID() }));
+    const state = btoa(JSON.stringify({ origin: window.location.origin, redirect, nonce: crypto.randomUUID() }));
     const redirectUri = encodeURIComponent(`${SUPABASE_URL}/functions/v1/discord-oauth-callback`);
     const scope = encodeURIComponent("identify email guilds");
     window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}&prompt=consent`;
