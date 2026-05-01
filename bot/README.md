@@ -62,51 +62,70 @@ Pronto. Vá ao Discord e digite `/` no servidor — os comandos do bot devem apa
 
 ---
 
-## 🚀 Hospedando em produção (VPS)
+## ☁️ Hospedando na Discloud (RECOMENDADO — fácil)
 
-### Opção 1: PM2 (recomendado em VPS Linux)
+A Discloud já está pré-configurada via `discloud.config`. É só zipar e subir.
 
+### 1. Prepare o `.env`
+No seu PC, na pasta `bot/`, copie e preencha:
+```bash
+cp .env.example .env
+```
+Preencha **todos** os campos do `.env` (token, client id, BOT_API_KEY, etc).
+
+### 2. Registre os slash commands (uma vez só)
+Antes de subir, rode no seu PC pra registrar os comandos no Discord:
+```bash
+npm install
+npm run deploy-commands
+```
+> Você só precisa rodar isso de novo quando adicionar/alterar comandos. A Discloud não roda esse script — ela só executa o `npm start`.
+
+### 3. Zipe a pasta
+**Importante**: zipe o **conteúdo** da pasta `bot/`, não a pasta inteira. O `discloud.config` precisa estar na **raiz do zip**.
+
+No Windows: entre na pasta `bot/`, selecione tudo (Ctrl+A), botão direito → "Compactar para arquivo zip".
+
+No Linux/Mac:
+```bash
+cd bot
+zip -r ../coinsdm-bot.zip . -x "node_modules/*" "*.log"
+```
+
+> ⚠️ **Não inclua `node_modules`** — a Discloud instala sozinha. Se incluir, vai estourar o limite de tamanho.
+
+### 4. Suba na Discloud
+1. Acesse <https://discloudbot.com/dashboard> e faça login
+2. Clique em **"Subir aplicativo"** (ou via comando `.up` no servidor da Discloud)
+3. Anexe o `coinsdm-bot.zip`
+4. Aguarde o build — a Discloud roda `npm install` e depois `npm start` automaticamente
+
+### 5. Acompanhe os logs
+No dashboard da Discloud, abra seu app e veja a aba **Logs**. Procure por:
+- `✅ X comandos carregados.`
+- `🤖 Logado como NomeDoBot#1234`
+
+Se aparecer `401 unauthorized`, sua `BOT_API_KEY` no `.env` não bate com a do Lovable Cloud.
+
+### Atualizando o bot depois
+Faça as alterações, zipe de novo, e na Discloud use a opção **"Commit"** (atualizar app existente) — isso preserva o app e só substitui os arquivos.
+
+---
+
+## 🚀 Alternativas (VPS, PM2, Docker)
+
+<details>
+<summary>Clique se preferir VPS ao invés de Discloud</summary>
+
+### PM2 (VPS Linux)
 ```bash
 npm install -g pm2
 pm2 start src/index.js --name coinsdm-bot
-pm2 save
-pm2 startup   # segue as instruções pra autostart no boot
-```
-
-Logs:
-```bash
+pm2 save && pm2 startup
 pm2 logs coinsdm-bot
 ```
 
-### Opção 2: systemd (Linux puro)
-
-Crie `/etc/systemd/system/coinsdm-bot.service`:
-
-```ini
-[Unit]
-Description=CoinsDM Discord Bot
-After=network.target
-
-[Service]
-Type=simple
-User=ubuntu
-WorkingDirectory=/home/ubuntu/coinsdm-bot
-ExecStart=/usr/bin/node src/index.js
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now coinsdm-bot
-sudo journalctl -u coinsdm-bot -f
-```
-
-### Opção 3: Docker
-
+### Docker
 ```dockerfile
 FROM node:20-alpine
 WORKDIR /app
@@ -115,11 +134,13 @@ RUN npm ci --omit=dev
 COPY . .
 CMD ["node", "src/index.js"]
 ```
-
 ```bash
 docker build -t coinsdm-bot .
 docker run -d --name coinsdm-bot --env-file .env --restart=always coinsdm-bot
 ```
+
+</details>
+
 
 ---
 
