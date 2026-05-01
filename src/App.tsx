@@ -39,6 +39,7 @@ const App = () => (
             <Route path="afiliados" element={<Affiliate />} />
             <Route path="admin" element={<Admin />} />
           </Route>
+          <Route path="/admin" element={<Navigate to="/app/admin" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
