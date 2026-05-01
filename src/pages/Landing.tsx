@@ -158,7 +158,7 @@ const Landing = () => {
 
           <nav className="hidden items-center gap-1 text-sm lg:flex">
             {[
-              { id: "planos", label: "Planos" },
+              { id: "planos", label: "Calcular preço" },
               { id: "prova", label: "Prova" },
               { id: "faq", label: "Dúvidas" },
             ].map((item) => (
@@ -518,7 +518,7 @@ const Landing = () => {
             <span className="text-xs text-muted-foreground">© {new Date().getFullYear()}</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-black uppercase text-muted-foreground">
-            <button onClick={() => scrollTo("planos")} className="hover:text-foreground">Planos</button>
+            <button onClick={() => scrollTo("planos")} className="hover:text-foreground">Preço</button>
             <button onClick={() => scrollTo("prova")} className="hover:text-foreground">Prova</button>
             <button onClick={() => scrollTo("faq")} className="hover:text-foreground">Dúvidas</button>
           </div>
