@@ -14,6 +14,7 @@ import NewCampaign from "./pages/app/NewCampaign";
 import Credits from "./pages/app/Credits";
 import Affiliate from "./pages/app/Affiliate";
 import MyServers from "./pages/app/MyServers";
+import Admin from "./pages/app/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="creditos" element={<Credits />} />
             <Route path="servidores" element={<MyServers />} />
             <Route path="afiliados" element={<Affiliate />} />
+            <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Megaphone, LogOut, Plus, MessageCircle, Gift, Server } from "lucide-react";
+import { LayoutDashboard, Megaphone, LogOut, Plus, MessageCircle, Gift, Server, Crown } from "lucide-react";
 import { DiscordIcon } from "@/components/DiscordIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 const formatDMs = (n: number) => n.toLocaleString("pt-BR");
 
-const nav = [
+const baseNav = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/app/campanhas", label: "Campanhas", icon: Megaphone, end: false },
   { to: "/app/servidores", label: "Servidores", icon: Server, end: false },
@@ -17,7 +17,11 @@ const nav = [
 
 const AppLayout = () => {
   const navigate = useNavigate();
-  const { profile } = useProfile();
+  const { profile, isAdmin } = useProfile();
+
+  const nav = isAdmin
+    ? [...baseNav, { to: "/app/admin", label: "Admin", icon: Crown, end: false }]
+    : baseNav;
 
   const logout = async () => {
     await supabase.auth.signOut();
