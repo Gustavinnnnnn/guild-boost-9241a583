@@ -4,13 +4,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 import {
-  MessageCircle, Plus, ArrowDown, ArrowUp, Sparkles, Zap, Crown, Rocket, Loader2,
-  Gift, Activity, ShieldCheck, Bolt, Calculator, Copy, QrCode,
-  Wallet, Send, Target, Clock, CheckCircle2, Info,
+  MessageCircle, Plus, ArrowDown, ArrowUp, Sparkles, Loader2,
+  Activity, ShieldCheck, Bolt, Copy, QrCode,
+  Wallet, Send, Target, Clock, CheckCircle2, Info, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -19,40 +20,19 @@ type Tx = {
   description: string | null; balance_after: number; created_at: string;
 };
 
-// 1 DM = R$ 0,05  (internamente armazenado como "coins" no DB, mas exibimos sempre como DMs)
+// 1 DM = R$ 0,20 (mesmo da edge function create-pix-deposit: CENTS_PER_COIN = 20)
 const PRICE_PER_DM = 0.20;
 const MIN_DEPOSIT_BRL = 30;
 const MIN_DMS = Math.round(MIN_DEPOSIT_BRL / PRICE_PER_DM); // 150
+const MAX_DMS = 50000;
 
 const dmsToBRL = (dms: number) => dms * PRICE_PER_DM;
-const brlToDms = (brl: number) => Math.floor(brl / PRICE_PER_DM);
 
 const formatBRL = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const formatDMs = (n: number) => n.toLocaleString("pt-BR");
 
-const PACKAGES = [
-  {
-    dms: 150, bonus: 0, priceBRL: 30, icon: Zap, label: "Starter",
-    desc: "Pra testar a plataforma", popular: false,
-    accent: "from-sky-500 to-cyan-400",
-  },
-  {
-    dms: 250, bonus: 25, priceBRL: 50, icon: Rocket, label: "Plus",
-    desc: "+10% de bônus", popular: false,
-    accent: "from-emerald-500 to-teal-400",
-  },
-  {
-    dms: 750, bonus: 150, priceBRL: 150, icon: Crown, label: "Pro",
-    desc: "+20% de bônus — o mais escolhido", popular: true,
-    accent: "from-primary to-primary-glow",
-  },
-  {
-    dms: 1250, bonus: 450, priceBRL: 250, icon: Sparkles, label: "Business",
-    desc: "+36% de bônus — melhor custo/DM", popular: false,
-    accent: "from-amber-400 to-orange-500",
-  },
-];
+const QUICK_PICKS = [150, 250, 500, 1000, 2500, 5000];
 
 const HOW_STEPS = [
   { icon: Wallet, title: "Compre DMs", desc: "Pague via PIX e receba as DMs na hora após confirmação." },
@@ -66,7 +46,7 @@ type DepositInfo = {
   qr_code: string;
   qr_code_base64: string;
   amount_cents: number;
-  coins: number; // = DMs
+  coins: number;
   expires_at?: string;
 };
 
@@ -74,9 +54,9 @@ const Credits = () => {
   const { user } = useAuth();
   const { profile, refresh } = useProfile();
   const [txs, setTxs] = useState<Tx[]>([]);
-  const [buying, setBuying] = useState<string | null>(null);
   const [tab, setTab] = useState<"shop" | "history">("shop");
-  const [customBRL, setCustomBRL] = useState<string>("25");
+  const [dmAmount, setDmAmount] = useState<number>(MIN_DMS);
+  const [buying, setBuying] = useState(false);
   const [deposit, setDeposit] = useState<DepositInfo | null>(null);
   const [paid, setPaid] = useState(false);
   const pollRef = useRef<number | null>(null);
@@ -113,13 +93,14 @@ const Credits = () => {
     return () => { if (pollRef.current) window.clearInterval(pollRef.current); };
   }, [deposit, paid, refresh]);
 
-  const startDeposit = async (dms: number, bonus: number, key: string) => {
-    setBuying(key);
+  const startDeposit = async () => {
+    if (dmAmount < MIN_DMS) return toast.error(`Mínimo: ${MIN_DMS} DMs (${formatBRL(MIN_DEPOSIT_BRL)})`);
+    setBuying(true);
     setPaid(false);
     const { data, error } = await supabase.functions.invoke("create-pix-deposit", {
-      body: { coins: dms, bonus },
+      body: { coins: dmAmount, bonus: 0 },
     });
-    setBuying(null);
+    setBuying(false);
     if (error || !data?.success) {
       console.error(error, data);
       return toast.error("Falha ao gerar PIX. Tente novamente.");
@@ -127,26 +108,12 @@ const Credits = () => {
     setDeposit(data as DepositInfo);
   };
 
-  const buyCustom = async () => {
-    const brl = parseFloat(customBRL.replace(",", "."));
-    if (!brl || brl < MIN_DEPOSIT_BRL) return toast.error(`Valor mínimo: ${formatBRL(MIN_DEPOSIT_BRL)}`);
-    const dms = brlToDms(brl);
-    await startDeposit(dms, 0, "custom");
-  };
-
-  const customDms = useMemo(() => {
-    const brl = parseFloat((customBRL || "0").replace(",", "."));
-    return isNaN(brl) ? 0 : brlToDms(brl);
-  }, [customBRL]);
-
   const dms = profile?.credits ?? 0;
+  const totalBRL = dmsToBRL(dmAmount);
 
   const { totalSpent, totalBought } = useMemo(() => {
     let spent = 0, bought = 0;
-    txs.forEach((t) => {
-      if (t.amount > 0) bought += t.amount;
-      else spent += -t.amount;
-    });
+    txs.forEach((t) => { if (t.amount > 0) bought += t.amount; else spent += -t.amount; });
     return { totalSpent: spent, totalBought: bought };
   }, [txs]);
 
@@ -173,7 +140,7 @@ const Credits = () => {
                 <span className="text-xs text-muted-foreground font-bold">DMs</span>
               </div>
               <div className="text-[11px] text-muted-foreground">
-                ≈ <b className="text-foreground">{formatBRL(dmsToBRL(dms))}</b> · 1 DM = R$ 0,05
+                ≈ <b className="text-foreground">{formatBRL(dmsToBRL(dms))}</b> · 1 DM = R$ 0,20
               </div>
             </div>
           </div>
@@ -195,250 +162,200 @@ const Credits = () => {
         </div>
       </div>
 
-      {/* BANNER REGRA DE PREÇO */}
-      <div className="mb-6 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/10 via-primary-glow/5 to-transparent p-4 flex flex-wrap items-center gap-x-6 gap-y-2">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-primary/20 grid place-items-center">
-            <Info className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <div className="text-sm font-black">Como funciona o preço</div>
-            <div className="text-[11px] text-muted-foreground">Você paga por DM enviada — não por pessoa que entra no servidor.</div>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="px-2.5 py-1 rounded-lg bg-card border border-border font-bold">1 DM = R$ 0,20</span>
-          <span className="px-2.5 py-1 rounded-lg bg-card border border-border font-bold">R$ 30 = 150 DMs</span>
-          <span className="px-2.5 py-1 rounded-lg bg-card border border-border font-bold">R$ 50 = 275 DMs</span>
-          <span className="px-2.5 py-1 rounded-lg bg-card border border-border font-bold">R$ 150 = 900 DMs</span>
-        </div>
-      </div>
-
       {/* TABS */}
       <div className="flex items-center gap-1 mb-6 p-1 rounded-xl bg-secondary/50 border border-border w-fit">
-        <button
-          onClick={() => setTab("shop")}
+        <button onClick={() => setTab("shop")}
           className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition flex items-center gap-2 ${
             tab === "shop" ? "bg-card shadow text-foreground" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Sparkles className="h-3.5 w-3.5" /> Comprar
+          }`}>
+          <Sparkles className="h-3.5 w-3.5" /> Comprar DMs
         </button>
-        <button
-          onClick={() => setTab("history")}
+        <button onClick={() => setTab("history")}
           className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition flex items-center gap-2 ${
             tab === "history" ? "bg-card shadow text-foreground" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
+          }`}>
           <Activity className="h-3.5 w-3.5" /> Histórico
-          {txs.length > 0 && (
-            <span className="px-1.5 py-0.5 rounded-md bg-primary/20 text-primary text-[10px]">{txs.length}</span>
-          )}
+          {txs.length > 0 && <span className="px-1.5 py-0.5 rounded-md bg-primary/20 text-primary text-[10px]">{txs.length}</span>}
         </button>
       </div>
 
       {tab === "shop" && (
-        <>
-          <div className="grid lg:grid-cols-[1fr,360px] gap-5">
-            <div className="space-y-5">
-              <div>
-                <h2 className="text-lg font-black tracking-tight">Pacotes de DMs</h2>
-                <p className="text-xs text-muted-foreground">Pagamento via PIX · liberação automática</p>
-              </div>
-
-              <div className="grid sm:grid-cols-3 gap-3">
-                {PACKAGES.map((p) => {
-                  const I = p.icon;
-                  const total = p.dms + p.bonus;
-                  const key = String(p.dms);
-                  const pricePerDm = p.priceBRL / total;
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => startDeposit(p.dms, p.bonus, key)}
-                      disabled={buying !== null}
-                      className={`relative text-left rounded-2xl border-2 p-4 transition-all hover:-translate-y-0.5 ${
-                        p.popular
-                          ? "border-primary bg-gradient-to-br from-primary/5 to-transparent shadow-[0_0_30px_-12px_hsl(var(--primary)/0.6)]"
-                          : "border-border bg-card hover:border-primary/40"
-                      } disabled:opacity-50 disabled:cursor-wait`}
-                    >
-                      {p.popular && (
-                        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white bg-gradient-to-r from-primary to-primary-glow shadow">
-                          Mais escolhido
-                        </div>
-                      )}
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${p.accent} grid place-items-center shadow`}>
-                          <I className="h-4.5 w-4.5 text-white" />
-                        </div>
-                        <div>
-                          <div className="text-sm font-black">{p.label}</div>
-                          <div className="text-[10px] text-muted-foreground">{p.desc}</div>
-                        </div>
-                      </div>
-
-                      {/* DMs em destaque */}
-                      <div className="rounded-xl bg-secondary/40 border border-border/60 p-3 mb-3">
-                        <div className="flex items-baseline gap-1.5">
-                          <MessageCircle className="h-4 w-4 text-primary self-center" />
-                          <span className="text-3xl font-black tabular-nums leading-none">{formatDMs(total)}</span>
-                          <span className="text-xs font-black text-muted-foreground">DMs</span>
-                        </div>
-                        {p.bonus > 0 && (
-                          <div className="inline-flex items-center gap-1 mt-1.5 px-1.5 py-0.5 rounded bg-success/15 text-success text-[10px] font-black">
-                            <Gift className="h-2.5 w-2.5" /> {formatDMs(p.dms)} + {formatDMs(p.bonus)} bônus
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <div className="text-xl font-black">{formatBRL(p.priceBRL)}</div>
-                          <div className="text-[10px] text-muted-foreground">
-                            ≈ {formatBRL(pricePerDm).replace("R$", "R$")} por DM
-                          </div>
-                        </div>
-                        <div className={`h-9 w-9 rounded-lg bg-gradient-to-br ${p.accent} grid place-items-center`}>
-                          {buying === key ? (
-                            <Loader2 className="h-4 w-4 text-white animate-spin" />
-                          ) : (
-                            <Plus className="h-4 w-4 text-white" />
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* CONVERSOR */}
-              <div className="rounded-2xl border-2 border-dashed border-border bg-card/50 p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 grid place-items-center shadow">
-                    <Calculator className="h-5 w-5 text-white" />
-                  </div>
+        <div className="grid lg:grid-cols-[1fr,340px] gap-5">
+          {/* SELETOR PERSONALIZADO — DESTAQUE */}
+          <div className="space-y-4">
+            <div className="relative rounded-3xl overflow-hidden border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card p-6 md:p-8 shadow-[0_0_60px_-20px_hsl(var(--primary)/0.5)]">
+              <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
+              <div className="relative space-y-6">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div>
-                    <div className="text-sm font-black">Conversor — escolha o valor</div>
-                    <div className="text-[11px] text-muted-foreground">Digite quanto quer depositar e veja quantas DMs vai receber</div>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/20 text-primary text-[10px] uppercase tracking-widest font-black mb-2">
+                      <Zap className="h-3 w-3" /> Quanto você quer comprar?
+                    </div>
+                    <h2 className="text-xl md:text-2xl font-black tracking-tight">Escolha sua quantidade</h2>
+                    <p className="text-xs text-muted-foreground">Mínimo {MIN_DMS} DMs · 1 DM = R$ 0,20 · Sem mensalidade</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Total a pagar</div>
+                    <div className="text-3xl md:text-4xl font-black text-primary tabular-nums">{formatBRL(totalBRL)}</div>
                   </div>
                 </div>
 
-                <div className="grid sm:grid-cols-[1fr,auto,1fr,auto] gap-3 items-end">
-                  <div>
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Você paga</label>
-                    <div className="relative mt-1">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">R$</span>
-                      <Input
-                        type="number" min={MIN_DEPOSIT_BRL} step="1"
-                        value={customBRL}
-                        onChange={(e) => setCustomBRL(e.target.value)}
-                        className="pl-10 h-12 text-xl font-black tabular-nums"
-                        placeholder="50"
-                      />
+                {/* Big input */}
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-black text-muted-foreground">Quantidade de DMs</label>
+                  <div className="relative mt-2">
+                    <MessageCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-primary" />
+                    <Input
+                      type="number"
+                      min={MIN_DMS}
+                      max={MAX_DMS}
+                      step={1}
+                      value={dmAmount}
+                      onChange={(e) => {
+                        const v = parseInt(e.target.value);
+                        setDmAmount(isNaN(v) ? MIN_DMS : Math.min(MAX_DMS, Math.max(0, v)));
+                      }}
+                      onBlur={(e) => {
+                        const v = parseInt(e.target.value);
+                        if (isNaN(v) || v < MIN_DMS) setDmAmount(MIN_DMS);
+                      }}
+                      className="h-20 pl-14 pr-24 text-4xl md:text-5xl font-black tabular-nums bg-background/60 border-2 focus-visible:border-primary"
+                      placeholder={String(MIN_DMS)}
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-black text-muted-foreground uppercase tracking-wider">DMs</span>
+                  </div>
+                  {dmAmount < MIN_DMS && (
+                    <p className="text-xs text-destructive mt-1.5 font-bold">⚠️ Mínimo: {MIN_DMS} DMs ({formatBRL(MIN_DEPOSIT_BRL)})</p>
+                  )}
+                </div>
+
+                {/* Slider fino */}
+                <div>
+                  <Slider
+                    min={MIN_DMS}
+                    max={5000}
+                    step={10}
+                    value={[Math.min(5000, Math.max(MIN_DMS, dmAmount))]}
+                    onValueChange={([v]) => setDmAmount(v)}
+                  />
+                  <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5 font-bold">
+                    <span>{MIN_DMS} DMs</span>
+                    <span>5.000 DMs</span>
+                  </div>
+                </div>
+
+                {/* Atalhos */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest font-black text-muted-foreground mb-2">Atalhos rápidos</div>
+                  <div className="flex flex-wrap gap-2">
+                    {QUICK_PICKS.map((v) => {
+                      const active = dmAmount === v;
+                      return (
+                        <button
+                          key={v}
+                          onClick={() => setDmAmount(v)}
+                          className={`px-3 py-2 rounded-xl border-2 text-xs font-black transition ${
+                            active
+                              ? "border-primary bg-primary/15 text-primary shadow-glow"
+                              : "border-border bg-background/40 hover:border-primary/40"
+                          }`}
+                        >
+                          {formatDMs(v)} DMs
+                          <div className="text-[9px] font-bold text-muted-foreground mt-0.5">{formatBRL(dmsToBRL(v))}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Resumo + CTA */}
+                <div className="rounded-2xl bg-background/60 border border-border p-4">
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div>
+                      <div className="text-[9px] uppercase tracking-widest text-muted-foreground font-black">Compra</div>
+                      <div className="text-lg font-black tabular-nums flex items-center gap-1">
+                        <MessageCircle className="h-4 w-4 text-primary" /> {formatDMs(dmAmount)}
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="hidden sm:flex h-12 items-center justify-center text-2xl font-black text-muted-foreground pb-1">
-                    →
-                  </div>
-
-                  <div className="rounded-xl bg-gradient-to-br from-primary/15 to-primary-glow/15 border-2 border-primary/30 px-4 py-2.5">
-                    <div className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Você recebe</div>
-                    <div className="flex items-baseline gap-1.5">
-                      <MessageCircle className="h-4 w-4 text-primary self-center" />
-                      <span className="text-2xl font-black tabular-nums">{formatDMs(customDms)}</span>
-                      <span className="text-xs font-black text-muted-foreground">DMs</span>
+                    <div>
+                      <div className="text-[9px] uppercase tracking-widest text-muted-foreground font-black">Preço/DM</div>
+                      <div className="text-lg font-black tabular-nums">R$ 0,20</div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] uppercase tracking-widest text-muted-foreground font-black">Saldo após</div>
+                      <div className="text-lg font-black tabular-nums text-success">{formatDMs(dms + dmAmount)}</div>
                     </div>
                   </div>
 
                   <Button
-                    onClick={buyCustom}
-                    disabled={buying !== null || customDms < MIN_DMS}
+                    onClick={startDeposit}
+                    disabled={buying || dmAmount < MIN_DMS}
                     variant="discord"
-                    className="h-12 font-black"
+                    className="w-full h-14 text-base font-black gap-2"
                   >
-                    {buying === "custom" ? <Loader2 className="h-4 w-4 animate-spin" /> : <><QrCode className="h-4 w-4" /> Gerar PIX</>}
+                    {buying ? (
+                      <><Loader2 className="h-5 w-5 animate-spin" /> Gerando PIX...</>
+                    ) : (
+                      <><QrCode className="h-5 w-5" /> Pagar {formatBRL(totalBRL)} via PIX</>
+                    )}
                   </Button>
-                </div>
-
-                {/* Atalhos */}
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  <span className="text-[10px] text-muted-foreground self-center mr-1">Atalhos:</span>
-                  {[30, 50, 100, 150, 250, 500].map((v) => (
-                    <button
-                      key={v}
-                      onClick={() => setCustomBRL(String(v))}
-                      className="px-2 py-1 rounded-lg bg-secondary/60 border border-border text-[11px] font-bold hover:border-primary/40 transition"
-                    >
-                      R$ {v}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="text-[10px] text-muted-foreground mt-2">
-                  Mínimo {formatBRL(MIN_DEPOSIT_BRL)} ({formatDMs(MIN_DMS)} DMs)
                 </div>
               </div>
             </div>
 
-            {/* SIDEBAR */}
-            <aside className="space-y-3">
-              <div className="rounded-2xl border border-border bg-gradient-to-br from-card to-secondary/20 p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="h-8 w-8 rounded-lg bg-primary/15 grid place-items-center">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                  </div>
-                  <h3 className="text-sm font-black uppercase tracking-wider">Como funciona</h3>
-                </div>
-                <ol className="space-y-3">
-                  {HOW_STEPS.map((step, i) => {
-                    const I = step.icon;
-                    return (
-                      <li key={step.title} className="flex gap-3">
-                        <div className="relative shrink-0">
-                          <div className="h-8 w-8 rounded-lg bg-card border border-border grid place-items-center">
-                            <I className="h-4 w-4 text-primary" />
-                          </div>
-                          <div className="absolute -top-1 -left-1 h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-black grid place-items-center">
-                            {i + 1}
-                          </div>
-                        </div>
-                        <div className="min-w-0 pt-0.5">
-                          <div className="text-xs font-black">{step.title}</div>
-                          <div className="text-[11px] text-muted-foreground leading-snug">{step.desc}</div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ol>
+            {/* Banner regra */}
+            <div className="rounded-2xl border border-border bg-card p-4 flex items-start gap-3">
+              <div className="h-9 w-9 rounded-lg bg-primary/15 grid place-items-center shrink-0">
+                <Info className="h-4 w-4 text-primary" />
               </div>
-
-              <div className="rounded-2xl border border-border bg-card p-4 space-y-2.5">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-success" />
-                  <span className="text-xs font-bold">Pagamento via PIX</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Bolt className="h-4 w-4 text-warning" />
-                  <span className="text-xs font-bold">Liberação instantânea</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4 text-primary" />
-                  <span className="text-xs font-bold">DMs não expiram</span>
-                </div>
+              <div className="text-xs text-muted-foreground leading-relaxed">
+                <b className="text-foreground">Como funciona o preço:</b> você paga por DM <i>enviada</i>, não por pessoa que entra no servidor.
+                Sem mensalidade, sem assinatura. As DMs <b>nunca expiram</b>.
               </div>
-
-              <div className="rounded-xl bg-warning/10 border border-warning/30 p-3 text-[11px] text-warning-foreground">
-                <b>⚠️ Importante:</b> você paga pela DM <i>enviada</i>. Não garantimos que a pessoa vai entrar no seu servidor — apenas que a mensagem é entregue.
-              </div>
-            </aside>
+            </div>
           </div>
-        </>
+
+          {/* SIDEBAR */}
+          <aside className="space-y-3">
+            <div className="rounded-2xl border border-border bg-gradient-to-br from-card to-secondary/20 p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-8 w-8 rounded-lg bg-primary/15 grid place-items-center">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </div>
+                <h3 className="text-sm font-black uppercase tracking-wider">Como funciona</h3>
+              </div>
+              <ol className="space-y-3">
+                {HOW_STEPS.map((step, i) => {
+                  const I = step.icon;
+                  return (
+                    <li key={step.title} className="flex gap-3">
+                      <div className="relative shrink-0">
+                        <div className="h-8 w-8 rounded-lg bg-card border border-border grid place-items-center">
+                          <I className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="absolute -top-1 -left-1 h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-black grid place-items-center">
+                          {i + 1}
+                        </div>
+                      </div>
+                      <div className="min-w-0 pt-0.5">
+                        <div className="text-xs font-black">{step.title}</div>
+                        <div className="text-[11px] text-muted-foreground leading-snug">{step.desc}</div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-2.5">
+              <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-success" /><span className="text-xs font-bold">Pagamento via PIX</span></div>
+              <div className="flex items-center gap-2"><Bolt className="h-4 w-4 text-warning" /><span className="text-xs font-bold">Liberação instantânea</span></div>
+              <div className="flex items-center gap-2"><MessageCircle className="h-4 w-4 text-primary" /><span className="text-xs font-bold">DMs não expiram</span></div>
+            </div>
+          </aside>
+        </div>
       )}
 
-      {/* HISTÓRICO */}
       {tab === "history" && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           {txs.length === 0 ? (
@@ -459,9 +376,7 @@ const Credits = () => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-bold truncate">{t.description ?? t.type}</div>
-                      <div className="text-[11px] text-muted-foreground">
-                        {new Date(t.created_at).toLocaleString("pt-BR")}
-                      </div>
+                      <div className="text-[11px] text-muted-foreground">{new Date(t.created_at).toLocaleString("pt-BR")}</div>
                     </div>
                     <div className="text-right shrink-0">
                       <div className={`text-sm font-black tabular-nums ${isCredit ? "text-success" : "text-destructive"}`}>
@@ -489,11 +404,7 @@ const Credits = () => {
               <DialogDescription className="mt-2">
                 <span className="text-foreground font-bold">+{formatDMs(deposit?.coins ?? 0)} DMs</span> creditadas na sua conta.
               </DialogDescription>
-              <Button
-                className="mt-5 w-full font-black"
-                variant="discord"
-                onClick={() => { setDeposit(null); setPaid(false); }}
-              >
+              <Button className="mt-5 w-full font-black" variant="discord" onClick={() => { setDeposit(null); setPaid(false); }}>
                 Continuar
               </Button>
             </div>
@@ -503,9 +414,7 @@ const Credits = () => {
                 <DialogTitle className="flex items-center gap-2 text-lg font-black">
                   <QrCode className="h-5 w-5" /> Pague com PIX
                 </DialogTitle>
-                <DialogDescription>
-                  Escaneie o QR Code ou copie o código abaixo. Liberação automática.
-                </DialogDescription>
+                <DialogDescription>Escaneie o QR Code ou copie o código abaixo. Liberação automática.</DialogDescription>
               </DialogHeader>
 
               <div className="grid grid-cols-2 gap-3 my-2">
@@ -529,9 +438,7 @@ const Credits = () => {
                     className="h-56 w-56"
                   />
                 ) : (
-                  <div className="h-56 w-56 grid place-items-center text-muted-foreground text-xs">
-                    QR Code indisponível
-                  </div>
+                  <div className="h-56 w-56 grid place-items-center text-muted-foreground text-xs">QR Code indisponível</div>
                 )}
               </div>
 
@@ -552,8 +459,7 @@ const Credits = () => {
 
               {deposit.expires_at && (
                 <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  Expira em {new Date(deposit.expires_at).toLocaleString("pt-BR")}
+                  <Clock className="h-3 w-3" /> Expira em {new Date(deposit.expires_at).toLocaleString("pt-BR")}
                 </div>
               )}
             </>
