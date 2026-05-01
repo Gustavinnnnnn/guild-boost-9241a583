@@ -23,6 +23,7 @@ import {
   BarChart3,
   Megaphone,
   Sparkles,
+  Zap,
 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -95,6 +96,7 @@ const Landing = () => {
   const [clientId, setClientId] = useState<string>("");
   const [busy, setBusy] = useState(false);
   const [liveCount, setLiveCount] = useState(2_184_337);
+  const [dmCalc, setDmCalc] = useState<number>(1500);
 
   useEffect(() => {
     const ref = params.get("ref");
