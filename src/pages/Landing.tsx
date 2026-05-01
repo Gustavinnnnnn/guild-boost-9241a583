@@ -27,39 +27,14 @@ import {
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
-const plans = [
-  {
-    name: "Start",
-    price: 30,
-    dms: 150,
-    hook: "teste sem arriscar alto",
-    features: ["150 DMs segmentadas", "PIX com liberação automática", "Painel de campanha", "Suporte no Discord"],
-  },
-  {
-    name: "Scale",
-    price: 50,
-    dms: 275,
-    hook: "mais volume no primeiro disparo",
-    badge: "+25 DMs bônus",
-    features: ["250 DMs + 25 bônus", "Segmentação por nicho", "Métricas no painel", "Suporte no Discord"],
-  },
-  {
-    name: "Dominação",
-    price: 150,
-    dms: 900,
-    hook: "o plano que mais compensa",
-    badge: "+150 DMs bônus",
-    highlight: true,
-    features: ["750 DMs + 150 bônus", "Campanhas maiores", "Métricas em tempo real", "Suporte prioritário"],
-  },
-  {
-    name: "Autoridade",
-    price: 250,
-    dms: 1700,
-    hook: "para lançar pesado",
-    badge: "+450 DMs bônus",
-    features: ["1.250 DMs + 450 bônus", "Segmentação avançada", "Mais alcance por compra", "Suporte VIP"],
-  },
+const PRICE_PER_DM = 0.20;
+const MIN_DMS = 150;
+
+const quickPicks = [
+  { dms: 150, label: "Testar", hook: "validar a oferta" },
+  { dms: 500, label: "Crescer", hook: "primeiro disparo sério", popular: false },
+  { dms: 1500, label: "Escalar", hook: "campanha forte", popular: true },
+  { dms: 5000, label: "Dominar", hook: "lançamento pesado" },
 ];
 
 const proofStats = [
@@ -96,12 +71,12 @@ const outcomes = [
 
 const faqs = [
   {
-    q: "Preciso pagar mensalidade?",
-    a: "Não. Você compra créditos, usa quando quiser e volta só quando quiser mais volume.",
+    q: "Existe mensalidade?",
+    a: "Não. Você compra a quantidade de DMs que quiser (mínimo 150 = R$30) e usa quando quiser. Suas DMs nunca expiram.",
   },
   {
-    q: "O mínimo continua quanto?",
-    a: "O plano de entrada é R$30 com 150 DMs. Os planos maiores têm bônus de volume.",
+    q: "Quanto custa cada DM?",
+    a: "R$ 0,20 por DM enviada. Você define o volume — pode comprar 150, 287, 1.000, 5.000... o que precisar.",
   },
   {
     q: "Quando os créditos caem?",
